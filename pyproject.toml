@@ -40,6 +40,7 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.10",
     "respx>=0.21",
+    "pre-commit>=3.7",
 ]
 browser = [
     "playwright>=1.40",
@@ -72,6 +73,27 @@ extend-exclude = [".github/scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "W", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+no_implicit_optional = true
+exclude = [
+    "tests/",
+    "\\.github/scripts/",
+    "build/",
+    "dist/",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "duckduckgo_search.*",
+    "selectolax.*",
+    "psutil.*",
+    "respx.*",
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
