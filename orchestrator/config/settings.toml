@@ -17,3 +17,13 @@ request_timeout_seconds = 120
 [logging]
 level = "INFO"
 json = false
+
+[tools.fs]
+# Sandbox root for every filesystem tool. Override with
+# ORCHESTRATOR__TOOLS__FS__WORKSPACE_ROOT.
+workspace_root = "~/orchestrator-workspace"
+
+[tools.shell]
+# Empty allow-list means "permit anything not denied". Populate to harden.
+allow = []
+deny = ["rm", "rmdir", "sudo", "su", "mv", "dd", "mkfs", "shutdown", "reboot", "kill", "killall", "chown", "chmod"]

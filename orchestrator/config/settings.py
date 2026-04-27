@@ -11,12 +11,15 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 
 __all__ = [
     "DEFAULT_SETTINGS_PATH",
+    "FsToolSettings",
     "LoggingSettings",
     "OllamaSettings",
     "RamSettings",
     "SchedulerSettings",
     "Settings",
     "SettingsError",
+    "ShellToolSettings",
+    "ToolsSettings",
     "load_settings",
 ]
 
@@ -70,11 +73,42 @@ class LoggingSettings(BaseModel):
         return up
 
 
+class FsToolSettings(BaseModel):
+    workspace_root: str = str(Path.home() / "orchestrator-workspace")
+
+
+class ShellToolSettings(BaseModel):
+    allow: list[str] = Field(default_factory=list)
+    deny: list[str] = Field(
+        default_factory=lambda: [
+            "rm",
+            "rmdir",
+            "sudo",
+            "su",
+            "mv",
+            "dd",
+            "mkfs",
+            "shutdown",
+            "reboot",
+            "kill",
+            "killall",
+            "chown",
+            "chmod",
+        ]
+    )
+
+
+class ToolsSettings(BaseModel):
+    fs: FsToolSettings = Field(default_factory=FsToolSettings)
+    shell: ShellToolSettings = Field(default_factory=ShellToolSettings)
+
+
 class Settings(BaseModel):
     ram: RamSettings = Field(default_factory=RamSettings)
     scheduler: SchedulerSettings = Field(default_factory=SchedulerSettings)
     ollama: OllamaSettings = Field(default_factory=OllamaSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
+    tools: ToolsSettings = Field(default_factory=ToolsSettings)
 
 
 def _read_toml(path: Path) -> dict[str, Any]:
