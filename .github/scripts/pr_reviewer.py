@@ -207,10 +207,13 @@ def main() -> int:
         or f["filename"].startswith(("docs/", "."))
         for f in files
     )
-    if total_added > 60 and test_added == 0 and not is_docs_only:
+    pr_labels = {lbl["name"] for lbl in pr.get("labels", [])}
+    has_bypass_tests = "bot-review-bypass" in pr_labels
+    if total_added > 60 and test_added == 0 and not is_docs_only and not has_bypass_tests:
         violations.append(
             f"Non-trivial change ({total_added} lines added) without any test changes. "
-            f"Add unit tests under `tests/` covering at least the happy path + 2 failure modes."
+            f"Add unit tests under `tests/` covering at least the happy path + 2 failure modes. "
+            f"(Add label `bot-review-bypass` for config-only/tooling PRs that legitimately have no testable code.)"
         )
 
     runs_resp = gh("GET", f"/repos/{REPO}/commits/{head_sha}/check-runs?per_page=100")
