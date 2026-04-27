@@ -41,3 +41,8 @@ secrets.toml
 .playwright/
 playwright-report/
 test-results/
+
+# Agent scratch dirs (temp issue bodies created during bootstrap)
+.tmp-issues/
+.issue-bodies/
+
