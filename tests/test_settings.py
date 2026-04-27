@@ -25,8 +25,9 @@ def test_defaults_load(monkeypatch: pytest.MonkeyPatch) -> None:
     _strip_env(monkeypatch)
     s = load_settings()
     assert isinstance(s, Settings)
-    assert s.ram.soft_cap_mb == 8000
-    assert s.ram.hard_cap_mb == 11000
+    assert s.ram.soft_cap_mb == 7000
+    assert s.ram.hard_cap_mb == 5000
+    assert s.ram.poll_interval_s == 1.0
     assert s.scheduler.max_concurrent_steps == 2
     assert s.ollama.base_url.startswith("http://")
     assert s.logging.level == "INFO"
@@ -36,14 +37,14 @@ def test_defaults_load(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_env_var_override(monkeypatch: pytest.MonkeyPatch) -> None:
     _strip_env(monkeypatch)
-    monkeypatch.setenv("ORCHESTRATOR__RAM__SOFT_CAP_MB", "4096")
-    monkeypatch.setenv("ORCHESTRATOR__RAM__HARD_CAP_MB", "9000")
+    monkeypatch.setenv("ORCHESTRATOR__RAM__SOFT_CAP_MB", "9000")
+    monkeypatch.setenv("ORCHESTRATOR__RAM__HARD_CAP_MB", "4096")
     monkeypatch.setenv("ORCHESTRATOR__LOGGING__JSON", "true")
     monkeypatch.setenv("ORCHESTRATOR__OLLAMA__BASE_URL", "http://example.invalid:9999")
 
     s = load_settings()
-    assert s.ram.soft_cap_mb == 4096
-    assert s.ram.hard_cap_mb == 9000
+    assert s.ram.soft_cap_mb == 9000
+    assert s.ram.hard_cap_mb == 4096
     assert s.logging.json is True
     assert s.ollama.base_url == "http://example.invalid:9999"
 
@@ -65,11 +66,11 @@ def test_invalid_type_raises(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
         load_settings(bad)
 
 
-def test_hard_cap_must_be_ge_soft(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_hard_cap_must_be_lt_soft(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _strip_env(monkeypatch)
     bad = tmp_path / "bad.toml"
     bad.write_text(
-        "[ram]\nsoft_cap_mb = 9000\nhard_cap_mb = 1000\n",
+        "[ram]\nsoft_cap_mb = 1000\nhard_cap_mb = 9000\n",
         encoding="utf-8",
     )
     with pytest.raises(SettingsError):
