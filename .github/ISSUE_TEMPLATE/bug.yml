@@ -1,0 +1,30 @@
+name: 🐛 Bug report
+description: Something is broken or behaves incorrectly.
+title: "[bug] <short summary>"
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "macOS 14.4, Python 3.11.7, Ollama 0.x.y, ..."
+    validations:
+      required: true

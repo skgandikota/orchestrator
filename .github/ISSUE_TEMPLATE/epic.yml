@@ -1,0 +1,39 @@
+name: 🗺️ Epic
+description: A phase-level umbrella issue tracking many sub-tasks.
+title: "[Epic] Phase N: <name>"
+labels: ["epic"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One paragraph: what does "done" look like for this phase?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: In scope
+    validations:
+      required: true
+  - type: textarea
+    id: out
+    attributes:
+      label: Out of scope
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Sub-tasks
+      description: Checklist of child issues. GitHub auto-tracks completion.
+      value: |
+        - [ ] #
+        - [ ] #
+    validations:
+      required: true
+  - type: textarea
+    id: success
+    attributes:
+      label: Success criteria
+      description: Verifiable signals that the phase is complete.
+    validations:
+      required: true

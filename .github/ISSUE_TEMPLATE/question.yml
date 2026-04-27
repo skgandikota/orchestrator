@@ -1,0 +1,16 @@
+name: ❓ Question / discussion
+description: Ask a design or usage question.
+title: "[q] <short summary>"
+labels: ["type:question"]
+body:
+  - type: textarea
+    id: q
+    attributes:
+      label: Question
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What have you already tried or read?

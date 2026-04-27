@@ -1,0 +1,65 @@
+name: 🤖 Agent-friendly task
+description: A granular implementation task ready for a coding agent or contributor to pick up.
+title: "[<area>] <verb> <thing>"
+labels: ["agent-friendly"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for any task small enough to land in a single PR.
+        Fill in every section — vague issues do not get picked up.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why this task exists. Link to the parent Epic and to `docs/PLAN.md` sections.
+      placeholder: |
+        Part of Phase 1 (Foundations) — Epic #N.
+        See `docs/PLAN.md` § Phase 1.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Testable bullet points describing the finished state.
+      placeholder: |
+        - [ ] `core/ram_monitor.py` exists and exports `RamMonitor` class.
+        - [ ] Soft cap and hard cap configurable via `settings.toml`.
+        - [ ] Emits a kill-switch event when free RAM crosses the hard cap.
+        - [ ] Unit tests cover threshold transitions.
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Files / paths to touch
+      description: Best guess at where the change should land. Update if you discover otherwise.
+      placeholder: |
+        - `orchestrator/core/ram_monitor.py` (new)
+        - `orchestrator/config/settings.toml` (add keys)
+        - `tests/core/test_ram_monitor.py` (new)
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Suggested approach
+      description: Optional hints. Leave blank if obvious.
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Issues that must be done first.
+      placeholder: "Blocked by #N (project skeleton)"
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done
+      description: Defaults from CONTRIBUTING.md — copy & adjust if needed.
+      value: |
+        - [ ] Acceptance Criteria met
+        - [ ] Tests added and passing (`pytest`)
+        - [ ] `ruff check` and `ruff format --check` clean
+        - [ ] Type hints on public surfaces
+        - [ ] PR body contains `Closes #<this-issue>`

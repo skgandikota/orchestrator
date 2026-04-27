@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📐 Architecture / design plan
+    url: https://github.com/skgandikota/orchestrator/blob/main/docs/PLAN.md
+    about: Read the full design before opening a question.
+  - name: 🤝 Contributing guide
+    url: https://github.com/skgandikota/orchestrator/blob/main/CONTRIBUTING.md
+    about: How humans and coding agents pick up issues and submit PRs.

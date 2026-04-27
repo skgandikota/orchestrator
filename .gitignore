@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.python-version
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Orchestrator runtime
+*.db
+*.sqlite
+*.sqlite3
+.orchestrator/
+logs/
+.env
+.env.local
+secrets.toml
+
+# Playwright / browsers
+.playwright/
+playwright-report/
+test-results/
