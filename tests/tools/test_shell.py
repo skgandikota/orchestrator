@@ -134,3 +134,104 @@ def test_missing_executable_returns_127(tmp_path: Path) -> None:
     assert res.exit_code == 127
     assert res.timed_out is False
     assert "not found" in res.stderr.lower()
+
+
+def test_non_string_cmd_entries_rejected(tmp_path: Path) -> None:
+    s = _settings(tmp_path)
+    with pytest.raises(TypeError):
+        run_command([PY, 123], settings=s)  # type: ignore[list-item]
+
+
+def test_cwd_not_a_directory(tmp_path: Path) -> None:
+    s = _settings(tmp_path)
+    f = tmp_path / "afile"
+    f.write_text("x", encoding="utf-8")
+    with pytest.raises(NotADirectoryError):
+        run_command([PY, "-c", "pass"], cwd=str(f), settings=s)
+
+
+def test_truncate_oversize_output_helper() -> None:
+    """``_truncate`` clips at MAX_OUTPUT_BYTES (line 73)."""
+    from orchestrator.tools.shell import MAX_OUTPUT_BYTES, _truncate
+
+    big = b"x" * (MAX_OUTPUT_BYTES + 50)
+    out = _truncate(big)
+    assert "[truncated]" in out
+    assert len(out.encode("utf-8")) <= MAX_OUTPUT_BYTES + 50
+
+
+def test_kill_short_circuits_when_already_exited() -> None:
+    """``_kill`` returns immediately when ``poll`` reports a finished proc."""
+    from orchestrator.tools.shell import _kill
+
+    class FakeProc:
+        pid = 99999
+
+        def poll(self) -> int:
+            return 0
+
+        def kill(self) -> None:  # pragma: no cover - must NOT be called
+            raise AssertionError("kill should not be invoked")
+
+    _kill(FakeProc())  # type: ignore[arg-type]
+
+
+def test_kill_swallows_exceptions(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Errors raised by the OS during kill are silently absorbed (lines 85-86)."""
+    from orchestrator.tools import shell as shell_mod
+
+    class FakeProc:
+        pid = 99999
+
+        def poll(self) -> None:
+            return None
+
+        def kill(self) -> None:
+            raise OSError("nope")
+
+    # On posix os.killpg is invoked; on windows proc.kill is invoked. Monkey-patch
+    # both so the test is platform-agnostic.
+    monkeypatch.setattr(shell_mod.os, "name", "posix", raising=False)
+
+    def boom(*_a, **_kw) -> None:
+        raise PermissionError("denied")
+
+    monkeypatch.setattr(shell_mod.os, "killpg", boom, raising=False)
+    monkeypatch.setattr(shell_mod.os, "getpgid", lambda _pid: 1, raising=False)
+    monkeypatch.setattr(shell_mod.signal, "SIGKILL", 9, raising=False)
+    shell_mod._kill(FakeProc())  # type: ignore[arg-type]
+
+
+def test_timeout_cleanup_secondary_timeout(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """If the cleanup ``communicate`` after kill also times out, we still return (lines 155-156)."""
+    import subprocess as _sp
+
+    from orchestrator.tools import shell as shell_mod
+
+    class FakeProc:
+        pid = 12345
+        returncode = 0
+
+        def __init__(self) -> None:
+            self._calls = 0
+
+        def communicate(self, timeout: float | None = None):
+            self._calls += 1
+            raise _sp.TimeoutExpired(cmd="x", timeout=timeout or 0)
+
+        def poll(self) -> None:
+            return None
+
+        def kill(self) -> None:  # pragma: no cover - swallowed
+            return None
+
+    def fake_popen(*_a, **_kw) -> FakeProc:
+        return FakeProc()
+
+    monkeypatch.setattr(shell_mod.subprocess, "Popen", fake_popen)
+    s = _settings(tmp_path)
+    res = run_command([PY, "-c", "pass"], timeout=0.1, settings=s)
+    assert res.timed_out is True
+    assert res.exit_code == -1
+    assert res.stdout == ""
+    assert res.stderr == ""

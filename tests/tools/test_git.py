@@ -142,3 +142,103 @@ def test_log_limit_honored(repo: Path) -> None:
     assert commits[0].subject == "c3"
     assert all(len(c.sha) == 40 for c in commits)
     assert commits[0].author == "Tester"
+
+
+def test_log_zero_returns_empty(repo: Path) -> None:
+    _seed_initial_commit(repo)
+    assert git_tool.log(n=0) == []
+    assert git_tool.log(n=-3) == []
+
+
+def test_diff_with_path_argument(repo: Path) -> None:
+    _seed_initial_commit(repo)
+    (repo / "a.txt").write_text("aaa\n", encoding="utf-8")
+    (repo / "b.txt").write_text("bbb\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "add a/b")
+    (repo / "a.txt").write_text("aaa changed\n", encoding="utf-8")
+    (repo / "b.txt").write_text("bbb changed\n", encoding="utf-8")
+    out = git_tool.diff(path="a.txt")
+    assert "a.txt" in out
+    assert "b.txt" not in out
+
+
+def test_checkout_create_new_branch(repo: Path) -> None:
+    _seed_initial_commit(repo)
+    git_tool.checkout("feature/new", create=True)
+    assert git_tool.current_branch() == "feature/new"
+
+
+def test_checkout_invalid_ref_with_whitespace(repo: Path) -> None:
+    _seed_initial_commit(repo)
+    with pytest.raises(GitError, match="invalid ref"):
+        git_tool.checkout("bad ref")
+
+
+def test_checkout_create_validates_branch_name(repo: Path) -> None:
+    _seed_initial_commit(repo)
+    with pytest.raises(GitError, match="invalid branch name"):
+        git_tool.checkout("weird?char", create=True)
+
+
+def test_settings_and_workspace_root_helpers(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Cover ``_settings`` / ``_workspace_root`` (default code path)."""
+    from orchestrator.config.settings import FsToolSettings, Settings, ToolsSettings
+
+    fake = Settings(tools=ToolsSettings(fs=FsToolSettings(workspace_root="/tmp/ws-x")))
+    monkeypatch.setattr(git_tool, "load_settings", lambda: fake)
+    assert git_tool._settings().tools.fs.workspace_root == "/tmp/ws-x"
+    assert git_tool._workspace_root() == Path("/tmp/ws-x")
+
+
+def test_porcelain_parser_branch_ab_and_renames() -> None:
+    """Hand-crafted porcelain v2 to exercise branch.ab + rename + short tokens."""
+    sample = (
+        "\n"
+        "# branch.head main\n"
+        "# branch.ab +3 -2\n"
+        "1 M. N... 100644 100644 100644 abc abc README.md\n"
+        "1 .M N... 100644 100644 100644 abc abc src/app.py\n"
+        "1 short tokens\n"
+        "? untracked.txt\n"
+    )
+    st = git_tool._parse_porcelain_v2(sample)
+    assert st.branch == "main"
+    assert st.ahead == 3
+    assert st.behind == 2
+    assert "README.md" in st.staged
+    assert "src/app.py" in st.unstaged
+    assert "untracked.txt" in st.untracked
+
+
+def test_log_skips_blank_and_malformed_lines(repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    sep = "\x1f"
+    real_run = git_tool._run
+
+    def fake_run(args: list[str], *, cwd=None) -> str:
+        if args and args[0] == "log":
+            return f"\nshasha{sep}only{sep}two\n" + sep.join(["a", "b", "c", "d"]) + "\n"
+        return real_run(args, cwd=cwd)
+
+    monkeypatch.setattr(git_tool, "_run", fake_run)
+    out = git_tool.log(n=5)
+    assert len(out) == 1
+    assert out[0].sha == "a"
+
+
+def test_has_staged_changes_unexpected_exit_raises(
+    repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class FakeProc:
+        returncode = 2
+        stdout = ""
+        stderr = "explosion"
+
+    def fake_run(*_a, **_kw):
+        return FakeProc()
+
+    _seed_initial_commit(repo)
+    (repo / "x.txt").write_text("x\n", encoding="utf-8")
+    monkeypatch.setattr(git_tool.subprocess, "run", fake_run)
+    with pytest.raises(GitError, match="diff --cached"):
+        git_tool.commit("msg", add_all=False)

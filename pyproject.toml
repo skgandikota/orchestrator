@@ -65,3 +65,23 @@ select = ["E", "F", "I", "UP", "B", "W", "SIM", "RUF"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
+
+[tool.coverage.run]
+source = ["orchestrator"]
+branch = true
+omit = [
+    "orchestrator/tools/_browser_worker.py",
+    "orchestrator/tools/browser.py",
+]
+
+[tool.coverage.report]
+fail_under = 95
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "\\.\\.\\.",
+]

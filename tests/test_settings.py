@@ -89,3 +89,30 @@ def test_malformed_toml(tmp_path: Path) -> None:
     bad.write_text("this is = = not toml", encoding="utf-8")
     with pytest.raises(SettingsError, match="Invalid TOML"):
         load_settings(bad)
+
+
+def test_env_override_skips_empty_segment(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Env vars with empty path components are silently ignored (line 146)."""
+    _strip_env(monkeypatch)
+    cfg = tmp_path / "ok.toml"
+    cfg.write_text("[ram]\nsoft_cap_mb = 4096\n", encoding="utf-8")
+    # ORCHESTRATOR____KEY -> path == ["", "KEY"] -> any empty -> continue
+    monkeypatch.setenv("ORCHESTRATOR____STRAY", "ignored")
+    s = load_settings(cfg)
+    assert s.ram.soft_cap_mb == 4096
+
+
+def test_env_override_replaces_non_dict_intermediate(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """When an intermediate TOML key is a scalar, env override replaces it with a dict (152-153)."""
+    _strip_env(monkeypatch)
+    cfg = tmp_path / "ok.toml"
+    # tools.web is set as a *string* here so the env override has to replace it with a dict.
+    cfg.write_text(
+        '[tools]\nweb = "scalar-not-a-dict"\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("ORCHESTRATOR__TOOLS__WEB__USER_AGENT", "ua-from-env/1.0")
+    s = load_settings(cfg)
+    assert s.tools.web.user_agent == "ua-from-env/1.0"

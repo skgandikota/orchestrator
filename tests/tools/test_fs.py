@@ -108,3 +108,9 @@ def test_list_dir_on_file_raises(tmp_path: Path) -> None:
     fs.write_file("f.txt", "x", settings=s)
     with pytest.raises(NotADirectoryError):
         fs.list_dir("f.txt", settings=s)
+
+
+def test_delete_workspace_root_refused(tmp_path: Path) -> None:
+    s = _settings(tmp_path)
+    with pytest.raises(WorkspaceEscapeError, match="workspace root"):
+        fs.delete_file(".", settings=s)

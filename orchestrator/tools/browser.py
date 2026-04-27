@@ -292,9 +292,7 @@ class BrowserTool:
             try:
                 if self._transport.is_alive():
                     self._next_id += 1
-                    payload = json.dumps(
-                        {"id": self._next_id, "method": "shutdown", "params": {}}
-                    )
+                    payload = json.dumps({"id": self._next_id, "method": "shutdown", "params": {}})
                     try:
                         self._transport.send(payload)
                         self._transport.recv(min(self.call_timeout, 5.0))

@@ -240,6 +240,20 @@ def main() -> int:
             "(branch protection enforces linear history on merge)."
         )
 
+    unsigned = [
+        c["sha"][:8]
+        for c in commits
+        if not (c.get("commit", {}).get("verification", {}) or {}).get("verified", False)
+    ]
+    if unsigned:
+        violations.append(
+            "Unsigned commits on this branch (`required_signatures` is enforced on `main`):\n"
+            + "\n".join(f"  - `{sha}`" for sha in unsigned[:10])
+            + ("\n  - ..." if len(unsigned) > 10 else "")
+            + "\n\nSee CONTRIBUTING.md (`Signed commits`) for setup. Re-sign via "
+            "`git rebase --exec 'git commit --amend --no-edit -S' <base>` and force-push."
+        )
+
     pr_labels = {(lbl.get("name") or "").lower() for lbl in (pr.get("labels") or [])}
     bypass = BYPASS_LABEL.lower() in pr_labels
 
