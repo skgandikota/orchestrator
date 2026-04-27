@@ -27,6 +27,7 @@ dependencies = [
     "duckduckgo-search>=6.0",
     "mcp>=1.0,<2",
     "pyyaml>=6.0",
+    "jsonschema>=4.21",
 ]
 
 [project.scripts]
