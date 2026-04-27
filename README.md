@@ -91,6 +91,21 @@ This project is **agent-friendly**: every issue contains enough context, accepta
 
 Mac M1 Pro, 16 GB RAM. Designed to never exceed ~11 GB resident.
 
+## Wiring external MCP servers
+
+The orchestrator can consume any number of remote/cloud MCP servers as
+local tools. Copy the example config and edit it:
+
+```bash
+cp config/mcp_servers.yaml.example config/mcp_servers.yaml
+# edit config/mcp_servers.yaml — supports stdio | http | sse transports
+orchestrator mcp list      # show connected servers + tool counts
+orchestrator mcp reload    # re-read the config without restarting
+```
+
+Environment variables in the config (e.g. `${GITHUB_TOKEN}`) are expanded
+at load time, so secrets stay out of source control.
+
 ## License
 
 Licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License** ([CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)).
