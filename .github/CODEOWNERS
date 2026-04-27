@@ -1,0 +1,41 @@
+# Code owners for the orchestrator repo.
+#
+# Anything matching a pattern below requires the listed owners to approve the
+# pull request before it can be merged (when "Require review from Code Owners"
+# is enabled in branch protection).
+#
+# Syntax: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-security/customizing-your-repository/about-code-owners
+#
+# Note: GitHub Apps (e.g. code-reviewer-001) CANNOT be listed in CODEOWNERS
+# (apps are not valid CODEOWNERS principals). They are configured as
+# mandatory reviewers via Repository Rulesets / Branch Protection — see
+# `.github/branch-protection.md` for the configuration applied to `main`.
+
+# Default owner for everything in the repo
+*                                @skgandikota
+
+# Documentation
+/docs/                           @skgandikota
+/README.md                       @skgandikota
+/CONTRIBUTING.md                 @skgandikota
+/CODE_OF_CONDUCT.md              @skgandikota
+/LICENSE                         @skgandikota
+
+# GitHub configuration
+/.github/                        @skgandikota
+
+# Core orchestration & scheduler — touch with extra care
+/orchestrator/core/              @skgandikota
+
+# Model adapters (local + big AI + browser drivers)
+/orchestrator/models/            @skgandikota
+
+# External interfaces (OpenAI-compat / HTTP / MCP / CLI)
+/orchestrator/interfaces/        @skgandikota
+
+# Tool belt
+/orchestrator/tools/             @skgandikota
+
+# Prompt templates and evaluation harness
+/orchestrator/prompts/           @skgandikota
+/orchestrator/evals/             @skgandikota
