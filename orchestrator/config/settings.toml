@@ -2,9 +2,9 @@
 # Any value can be overridden via env var ORCHESTRATOR__<SECTION>__<KEY>.
 
 [ram]
-soft_cap_mb = 8000
-hard_cap_mb = 11000
-poll_interval_seconds = 1.0
+soft_cap_mb = 7000
+hard_cap_mb = 5000
+poll_interval_s = 1.0
 
 [scheduler]
 max_concurrent_steps = 2

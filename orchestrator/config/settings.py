@@ -35,16 +35,16 @@ class SettingsError(RuntimeError):
 
 
 class RamSettings(BaseModel):
-    soft_cap_mb: int = Field(8000, ge=1)
-    hard_cap_mb: int = Field(11000, ge=1)
-    poll_interval_seconds: float = Field(1.0, gt=0)
+    soft_cap_mb: int = Field(7000, ge=1)
+    hard_cap_mb: int = Field(5000, ge=1)
+    poll_interval_s: float = Field(1.0, gt=0)
 
     @field_validator("hard_cap_mb")
     @classmethod
-    def _hard_ge_soft(cls, v: int, info: Any) -> int:
+    def _hard_lt_soft(cls, v: int, info: Any) -> int:
         soft = info.data.get("soft_cap_mb")
-        if soft is not None and v < soft:
-            raise ValueError("hard_cap_mb must be >= soft_cap_mb")
+        if soft is not None and v >= soft:
+            raise ValueError("hard_cap_mb must be < soft_cap_mb (caps are minimum free RAM)")
         return v
 
 
