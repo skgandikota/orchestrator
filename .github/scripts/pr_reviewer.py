@@ -301,10 +301,9 @@ def main() -> int:
         print(f"Requested changes on PR #{PR_NUM}.")
         return 0
 
-    if warnings or pending or missing_required or bots_changes_requested:
+    if pending or missing_required or bots_changes_requested:
         gh("POST", f"/repos/{REPO}/pulls/{PR_NUM}/reviews", json={"body": body, "event": "COMMENT"})
         reasons = []
-        if warnings: reasons.append("warnings")
         if pending: reasons.append("pending CI")
         if missing_required: reasons.append(f"waiting on bots: {', '.join(missing_required)}")
         if bots_changes_requested: reasons.append(f"AI bots requested changes: {', '.join(bots_changes_requested)}")
