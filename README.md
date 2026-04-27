@@ -42,6 +42,19 @@ opencode / Claude Code / codex
 
 Full design details: [`docs/PLAN.md`](docs/PLAN.md).
 
+## How is this different from LiteLLM?
+
+Short version: **LiteLLM is a paid-API gateway built for throughput; `orchestrator` is a personal-machine scheduler built for $0 budgets and a 16GB RAM ceiling.** We use LiteLLM's SDK as our provider abstraction, but the product is a different thing entirely — see [`docs/VS_LITELLM.md`](docs/VS_LITELLM.md) for the full table.
+
+| | LiteLLM | `orchestrator` |
+|---|---|---|
+| Cost model | Pay-per-token | $0 — free tiers + local + headless-browser fallback |
+| Topology | Stateless proxy | Stateful job orchestrator |
+| Inference | Cloud-first | Local-first |
+| RAM target | Server-class | 16GB Mac M1 |
+| Tool execution | Caller's job | Orchestrator runs the tools (sandbox + MCP) |
+| Status / progress | None | First-class, never loads an LLM |
+
 ## Status
 
 **🚧 Pre-alpha — design complete, implementation kicking off.**
