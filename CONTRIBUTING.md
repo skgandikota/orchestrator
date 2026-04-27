@@ -86,6 +86,38 @@ orchestrator/
 - **Integration tests** that need Ollama: mark with `@pytest.mark.ollama` and skip by default in CI.
 - **Integration tests** that need API keys: mark with `@pytest.mark.live` and skip by default.
 - Mock all big-AI providers via `litellm` mock backends in unit tests.
+- **Coverage gate:** `pytest --cov=orchestrator --cov-fail-under=95` is enforced in CI. PRs that drop coverage below 95% will fail. Use `# pragma: no cover` only for genuinely-untestable branches (e.g. real subprocess fork paths).
+
+## Signed commits (mandatory)
+
+The `main` branch enforces `required_signatures` via a repository ruleset. **Every commit must be GPG- or SSH-signed**, otherwise push and merge are blocked.
+
+One-time setup:
+
+```bash
+# Option A: GPG
+gpg --full-generate-key                          # ed25519 or rsa4096
+gpg --list-secret-keys --keyid-format=long       # copy KEYID
+git config --global user.signingkey <KEYID>
+git config --global commit.gpgsign true
+git config --global tag.gpgsign true
+gpg --armor --export <KEYID>                     # paste at https://github.com/settings/gpg/new
+
+# Option B: SSH (simpler, uses existing ~/.ssh/id_ed25519)
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub
+git config --global commit.gpgsign true
+# upload the .pub at https://github.com/settings/ssh/new (key type = "Signing Key")
+```
+
+Verify:
+```bash
+git log --show-signature -1
+gh api /repos/skgandikota/orchestrator/commits/<sha> --jq '.commit.verification'
+# expect: verified=true, reason=valid
+```
+
+Bots (GitHub Apps) sign automatically with GitHub's web-flow signature when committing via the API. No setup needed for the strict reviewer's squash-merge.
 
 ## Definition of Done (applies to every issue)
 
@@ -94,9 +126,11 @@ A PR is mergeable when:
 1. Code implements the **Acceptance Criteria** in the issue.
 2. Tests for the new behavior exist and pass locally (`pytest`).
 3. `ruff check` and `ruff format --check` pass.
-4. Public APIs have type hints.
-5. Docs/`docs/PLAN.md` updated **only if the change deviates from the plan** — otherwise leave the plan alone.
-6. PR body says `Closes #<issue-number>`.
+4. **Coverage stays at or above 95%** (`--cov-fail-under=95` in CI).
+5. **Every commit on the branch is signed** (`verified=true` on GitHub).
+6. Public APIs have type hints.
+7. Docs/`docs/PLAN.md` updated **only if the change deviates from the plan** — otherwise leave the plan alone.
+8. PR body says `Closes #<issue-number>`.
 
 ## Architectural rules of the road
 

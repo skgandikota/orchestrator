@@ -1,5 +1,8 @@
 {
-  "required_status_checks": null,
+  "required_status_checks": {
+    "strict": true,
+    "contexts": ["ruff + pytest (cov >= 95%)"]
+  },
   "enforce_admins": false,
   "required_pull_request_reviews": {
     "required_approving_review_count": 1,
@@ -14,5 +17,6 @@
   "required_conversation_resolution": true,
   "block_creations": false,
   "lock_branch": false,
-  "allow_fork_syncing": false
+  "allow_fork_syncing": false,
+  "required_signatures": true
 }
