@@ -20,6 +20,7 @@ __all__ = [
     "SettingsError",
     "ShellToolSettings",
     "ToolsSettings",
+    "WebToolSettings",
     "load_settings",
 ]
 
@@ -98,9 +99,18 @@ class ShellToolSettings(BaseModel):
     )
 
 
+class WebToolSettings(BaseModel):
+    """Settings for the web fetch + search tool (`orchestrator.tools.web`)."""
+
+    user_agent: str = "orchestrator-bot/0.1 (+https://github.com/skgandikota/orchestrator)"
+    allow_private: bool = False
+    brave_api_key: str | None = None
+
+
 class ToolsSettings(BaseModel):
     fs: FsToolSettings = Field(default_factory=FsToolSettings)
     shell: ShellToolSettings = Field(default_factory=ShellToolSettings)
+    web: WebToolSettings = Field(default_factory=WebToolSettings)
 
 
 class Settings(BaseModel):

@@ -27,3 +27,7 @@ workspace_root = "~/orchestrator-workspace"
 # Empty allow-list means "permit anything not denied". Populate to harden.
 allow = []
 deny = ["rm", "rmdir", "sudo", "su", "mv", "dd", "mkfs", "shutdown", "reboot", "kill", "killall", "chown", "chmod"]
+
+[tools.web]
+user_agent = "orchestrator-bot/0.1 (+https://github.com/skgandikota/orchestrator)"
+allow_private = false
