@@ -231,3 +231,156 @@ def test_search_rejects_empty_query() -> None:
 def test_search_rejects_bad_limit() -> None:
     with pytest.raises(SearchError):
         search("x", limit=0, settings=_settings())
+
+
+def test_fetch_rejects_url_without_host() -> None:
+    with pytest.raises(FetchError, match="hostname"):
+        fetch("http:///just-a-path", settings=_settings(allow_private=True))
+
+
+def test_resolves_to_private_dns_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    def boom(*_a: Any, **_kw: Any) -> list[Any]:
+        raise web.socket.gaierror("dns down")
+
+    monkeypatch.setattr(web.socket, "getaddrinfo", boom)
+    with pytest.raises(FetchError, match="DNS lookup failed"):
+        fetch("https://example.com/", settings=_settings())
+
+
+def test_resolves_to_private_skips_unparseable(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Garbage sockaddr entries are ignored, allowing an otherwise-public host."""
+
+    def weird(*_a: Any, **_kw: Any) -> list[Any]:
+        return [(0, 0, 0, "", ("not-an-ip", 0)), (0, 0, 0, "", ("93.184.216.34", 0))]
+
+    monkeypatch.setattr(web.socket, "getaddrinfo", weird)
+    with respx.mock(assert_all_called=False) as router:
+        router.get("https://example.com/").mock(
+            return_value=httpx.Response(200, content=b"x", headers={"content-type": "text/plain"})
+        )
+        result = fetch("https://example.com/", settings=_settings())
+    assert result.status == 200
+
+
+def test_strip_html_falls_back_on_bad_encoding() -> None:
+    """A bogus encoding name still produces text via the utf-8 fallback (lines 116-117)."""
+    out = web._strip_html(b"<p>hi</p>", encoding="not-a-real-encoding")
+    assert "hi" in out
+
+
+def test_fetch_skips_empty_chunks_and_handles_exact_max_bytes() -> None:
+    """Cover empty-chunk skip (178) and ``remaining <= 0`` early break (181-182)."""
+
+    def handler(_request: httpx.Request) -> httpx.Response:
+        def stream():
+            yield b""
+            yield b"hello"
+            yield b"more"
+
+        return httpx.Response(
+            200,
+            content=stream(),
+            headers={"content-type": "text/plain"},
+        )
+
+    transport = httpx.MockTransport(handler)
+    client = httpx.Client(transport=transport)
+    try:
+        result = fetch(
+            "https://example.com/chunky",
+            max_bytes=5,
+            settings=_settings(),
+            client=client,
+        )
+    finally:
+        client.close()
+    assert result.text == "hello"
+    assert result.truncated is True
+
+
+@respx.mock
+def test_fetch_http_error_non_timeout() -> None:
+    respx.get("https://example.com/connreset").mock(side_effect=httpx.ConnectError("reset"))
+    with pytest.raises(FetchError, match="HTTP error"):
+        fetch("https://example.com/connreset", settings=_settings())
+
+
+@respx.mock
+def test_fetch_with_supplied_client_does_not_close_it() -> None:
+    """When the caller supplies a client, ``fetch`` must not close it (199->202 branch)."""
+    respx.get("https://example.com/with-client").mock(
+        return_value=httpx.Response(200, content=b"ok", headers={"content-type": "text/plain"})
+    )
+    client = httpx.Client()
+    try:
+        result = fetch("https://example.com/with-client", settings=_settings(), client=client)
+        assert result.status == 200
+        assert client.is_closed is False
+    finally:
+        client.close()
+
+
+def test_normalise_ddg_respects_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    """DDG provider stops yielding once *limit* is reached (line 252)."""
+    rows = [{"title": f"T{i}", "href": f"https://x{i}.example/", "body": ""} for i in range(5)]
+
+    class FakeDDGS:
+        def __init__(self, *_a: Any, **_kw: Any) -> None: ...
+        def __enter__(self) -> FakeDDGS:
+            return self
+
+        def __exit__(self, *_a: Any) -> None: ...
+        def text(self, *_a: Any, **_kw: Any) -> list[dict[str, str]]:
+            return rows
+
+    import sys
+    import types
+
+    fake_module = types.ModuleType("duckduckgo_search")
+    fake_module.DDGS = FakeDDGS  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "duckduckgo_search", fake_module)
+
+    out = search("anything", provider="duckduckgo", limit=2, settings=_settings())
+    assert len(out) == 2
+
+
+@respx.mock
+def test_search_brave_skips_rows_missing_url() -> None:
+    payload = {
+        "web": {
+            "results": [
+                {"title": "no-url", "url": "", "description": "x"},
+                {"title": "ok", "url": "https://r/", "description": "d"},
+            ]
+        }
+    }
+    respx.get("https://api.search.brave.com/res/v1/web/search").mock(
+        return_value=httpx.Response(200, json=payload)
+    )
+    out = search(
+        "kittens",
+        provider="brave",
+        limit=5,
+        settings=_settings(brave_api_key="k"),
+    )
+    assert [r.url for r in out] == ["https://r/"]
+
+
+@respx.mock
+def test_search_brave_with_supplied_client_does_not_close_it() -> None:
+    """Caller-supplied client must survive (279->282 branch)."""
+    respx.get("https://api.search.brave.com/res/v1/web/search").mock(
+        return_value=httpx.Response(200, json={"web": {"results": []}})
+    )
+    client = httpx.Client()
+    try:
+        out = search(
+            "x",
+            provider="brave",
+            settings=_settings(brave_api_key="k"),
+            client=client,
+        )
+        assert out == []
+        assert client.is_closed is False
+    finally:
+        client.close()

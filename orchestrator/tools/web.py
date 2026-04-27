@@ -122,7 +122,7 @@ def _strip_html(body: bytes, encoding: str | None) -> str:
     # Strip HTML comments. selectolax exposes them as nodes whose tag is
     # "_comment"; iterate defensively in case the backend changes.
     body_node = tree.body or tree.root
-    if body_node is not None:
+    if body_node is not None:  # pragma: no branch - selectolax always yields body or root
         for node in list(body_node.iter(include_text=False)):
             if getattr(node, "tag", None) == "_comment":
                 node.decompose()
@@ -200,8 +200,10 @@ def fetch(
             http.close()
 
     elapsed_ms = int((time.perf_counter() - start) * 1000)
-    text = _strip_html(body, encoding) if "html" in content_type.lower() else body.decode(
-        encoding or "utf-8", errors="replace"
+    text = (
+        _strip_html(body, encoding)
+        if "html" in content_type.lower()
+        else body.decode(encoding or "utf-8", errors="replace")
     )
     return FetchResult(
         url=url,

@@ -239,9 +239,7 @@ def test_worker_crash_with_no_response_raises():
 
 
 def test_worker_returns_error_payload():
-    tx = FakeTransport(
-        responses=[{"error": {"type": "TimeoutError", "message": "nav failed"}}]
-    )
+    tx = FakeTransport(responses=[{"error": {"type": "TimeoutError", "message": "nav failed"}}])
     tool = BrowserTool(transport_factory=_factory(tx), url_resolver=_public_resolver)
     with pytest.raises(BrowserToolError, match="TimeoutError"):
         tool.browse("https://example.com/")
