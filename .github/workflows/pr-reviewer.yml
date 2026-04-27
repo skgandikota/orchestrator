@@ -70,7 +70,7 @@ jobs:
 
       - name: Mint App installation token
         id: app
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.SKGANDIKOTA_APPID }}
           private-key: ${{ secrets.SKGANDIKOTA_PRIVATEKEY }}
