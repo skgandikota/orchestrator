@@ -1,0 +1,68 @@
+name: Request Copilot review
+
+# Auto-requests GitHub Copilot as a reviewer on every new PR.
+# Free for public repos. Pairs with the strict PR-reviewer bot
+# (.github/workflows/pr-reviewer.yml): Copilot adds inline AI feedback,
+# our strict reviewer enforces process / AC / secrets / CI gates.
+
+on:
+  pull_request_target:
+    types: [opened, ready_for_review, reopened]
+
+permissions:
+  pull-requests: write
+
+concurrency:
+  group: request-copilot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  request:
+    if: github.event.pull_request.draft != true && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mint App installation token
+        id: app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.SKGANDIKOTA_APPID }}
+          private-key: ${{ secrets.SKGANDIKOTA_PRIVATEKEY }}
+          owner: skgandikota
+          repositories: orchestrator
+
+      - name: Request Copilot review (GraphQL)
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          set -e
+          # Fetch the suggested reviewers; GitHub returns Copilot among them
+          # when the repo is eligible. We then call requestReviews with the
+          # Copilot bot's node ID.
+          COPILOT_ID=$(gh api graphql -f query='
+            query($owner:String!, $name:String!, $pr:Int!) {
+              repository(owner:$owner, name:$name) {
+                pullRequest(number:$pr) {
+                  suggestedReviewers { reviewer { login ... on Bot { id } } }
+                }
+                suggestedActors(first: 50, capabilities: [CAN_BE_ASSIGNED]) {
+                  nodes { ... on Bot { login id } }
+                }
+              }
+            }' -F owner=skgandikota -F name=orchestrator \
+               -F pr=${{ github.event.pull_request.number }} \
+            --jq '..|select(type=="object" and .login? and (.login|test("[Cc]opilot"))) | .id' \
+            | head -n1) || true
+
+          if [ -z "$COPILOT_ID" ]; then
+            echo "::warning::Could not resolve Copilot bot node ID; skipping request."
+            exit 0
+          fi
+
+          gh api graphql -f query='
+            mutation($prId:ID!, $userIds:[ID!]!) {
+              requestReviews(input:{pullRequestId:$prId, userIds:$userIds, union:true}) {
+                pullRequest { number }
+              }
+            }' -F prId="$PR_NODE_ID" -F userIds[]="$COPILOT_ID" \
+            || echo "::warning::Copilot review request failed (likely already requested)."
