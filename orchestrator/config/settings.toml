@@ -1,0 +1,19 @@
+# Default orchestrator settings.
+# Any value can be overridden via env var ORCHESTRATOR__<SECTION>__<KEY>.
+
+[ram]
+soft_cap_mb = 8000
+hard_cap_mb = 11000
+poll_interval_seconds = 1.0
+
+[scheduler]
+max_concurrent_steps = 2
+checkpoint_every_step = true
+
+[ollama]
+base_url = "http://127.0.0.1:11434"
+request_timeout_seconds = 120
+
+[logging]
+level = "INFO"
+json = false

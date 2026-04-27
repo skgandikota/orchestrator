@@ -57,7 +57,9 @@ Short version: **LiteLLM is a paid-API gateway built for throughput; `orchestrat
 
 ## Status
 
-**🚧 Pre-alpha — design complete, implementation kicking off.**
+**🚧 Pre-alpha — implementation underway.**
+
+Skeleton (package layout, settings loader, structured logging) landed in #31.
 
 Issues are organized into **7 phases** (Phase 1 → Phase 7) tracked via GitHub Milestones. Each phase has an Epic issue summarizing scope and linking to its sub-tasks.
 

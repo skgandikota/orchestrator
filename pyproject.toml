@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orchestrator"
+dynamic = ["version"]
+description = "Local-first agent orchestrator (Phase 1 skeleton)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "CC-BY-NC-SA-4.0" }
+authors = [{ name = "skgandikota" }]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "psutil>=5.9",
+    "pydantic>=2",
+    "structlog>=24",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+    "mypy>=1.10",
+]
+
+[project.urls]
+Homepage = "https://github.com/skgandikota/orchestrator"
+Issues = "https://github.com/skgandikota/orchestrator/issues"
+Source = "https://github.com/skgandikota/orchestrator"
+
+[tool.setuptools.packages.find]
+include = ["orchestrator*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+orchestrator = ["config/*.toml"]
+
+[tool.setuptools_scm]
+fallback_version = "0.1.0.dev0"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [".github/scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
