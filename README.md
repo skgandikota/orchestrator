@@ -1,5 +1,11 @@
 # orchestrator
 
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Status: Pre-alpha](https://img.shields.io/badge/status-pre--alpha-orange.svg)](#status)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+[![Platform: macOS (Apple Silicon)](https://img.shields.io/badge/platform-macOS%20(Apple%20Silicon)-lightgrey.svg)](#hardware-target)
+[![Agent-friendly](https://img.shields.io/badge/agent--friendly-yes-brightgreen.svg)](CONTRIBUTING.md)
+
 > A personal-machine AI orchestrator that intelligently splits work between **free-tier "big" cloud AI** (planning) and **local Ollama models** (reasoning + execution), without ever spiking RAM enough to crash the machine. Built to be consumed as a drop-in OpenAI-compatible "model" by [opencode](https://github.com/sst/opencode), [Claude Code](https://github.com/anthropics/claude-code), [codex](https://github.com/openai/codex), Cursor, Continue, etc.
 
 ## Why this exists
