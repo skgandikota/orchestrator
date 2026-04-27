@@ -51,6 +51,8 @@ class RamSettings(BaseModel):
 class SchedulerSettings(BaseModel):
     max_concurrent_steps: int = Field(2, ge=1)
     checkpoint_every_step: bool = True
+    acquire_timeout_s: float = Field(120.0, gt=0)
+    min_free_mb_for_load: int = Field(5500, ge=1)
 
 
 class OllamaSettings(BaseModel):
