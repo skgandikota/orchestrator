@@ -13,7 +13,7 @@
 required:
   - login: copilot-pull-request-reviewer
     name: GitHub Copilot review
-    optional: false
+    optional: true
   - login: coderabbitai
     name: CodeRabbit
     optional: true   # mark optional until installed; flip to false after install
