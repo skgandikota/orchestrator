@@ -1,0 +1,25 @@
+# Gitleaks configuration for orchestrator.
+# Extends the upstream default ruleset; only adds project-specific allowlists.
+title = "orchestrator gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test fixtures, lockfiles, and documentation samples that contain non-secret tokens."
+paths = [
+  '''(^|/)tests/.*''',
+  '''(^|/)docs/.*''',
+  '''(^|/)\.github/.*\.md$''',
+  '''(^|/)README\.md$''',
+  '''(^|/)CHANGELOG\.md$''',
+  '''(^|/)poetry\.lock$''',
+  '''(^|/)package-lock\.json$''',
+  '''(^|/)uv\.lock$''',
+]
+regexes = [
+  # Common placeholder tokens used in docs/examples.
+  '''(?i)example[-_]?(api|secret|token|key)''',
+  '''(?i)your[-_]?(api|secret|token|key)[-_]?here''',
+  '''(?i)changeme''',
+]

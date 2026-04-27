@@ -1,0 +1,18 @@
+# Project-level Semgrep configuration.
+# The CI workflow invokes Semgrep with the curated rule packs:
+#   p/default, p/python, p/security-audit, p/owasp-top-ten
+# This file only controls path exclusions so local `semgrep ci` runs match CI.
+rules: []
+
+paths:
+  exclude:
+    - ".venv/"
+    - "venv/"
+    - "build/"
+    - "dist/"
+    - ".mypy_cache/"
+    - ".pytest_cache/"
+    - ".ruff_cache/"
+    - "**/__pycache__/"
+    - "tests/fixtures/"
+    - "docs/"
