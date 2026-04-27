@@ -6,6 +6,7 @@ is wired up lazily by callers that have a config path — see
 ``orchestrator.cli`` and ``docs/PLAN.md`` for the wiring.
 """
 
+from . import _registrations  # noqa: F401  -- side-effect: populates default_registry
 from ._sandbox import WorkspaceEscapeError, resolve_in_workspace
 from .fs import delete_file, list_dir, read_file, write_file
 from .registry import Registry, Tool, ToolResult, default_registry
