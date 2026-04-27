@@ -1,0 +1,23 @@
+# Example MCP server configuration consumed by orchestrator.tools.mcp_client.
+#
+# Copy this file to config/mcp_servers.yaml (gitignored) and edit the
+# entries to match the MCP servers you want the orchestrator to surface
+# as local tools. Environment variables are expanded with ${VAR} syntax.
+servers:
+  - name: github
+    enabled: true
+    transport: stdio          # stdio | http | sse
+    command: ["npx", "-y", "@modelcontextprotocol/server-github"]
+    env:
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_TOKEN}
+    timeout_s: 30
+    tool_prefix: github_      # avoid name collisions
+
+  - name: context7
+    enabled: false
+    transport: http
+    url: https://mcp.context7.com/mcp
+    headers:
+      Authorization: Bearer ${CONTEXT7_KEY}
+    timeout_s: 20
+    tool_prefix: ctx7_

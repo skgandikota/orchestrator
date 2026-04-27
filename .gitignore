@@ -37,6 +37,9 @@ logs/
 .env.local
 secrets.toml
 
+# User-supplied MCP client configuration (see config/mcp_servers.yaml.example)
+config/mcp_servers.yaml
+
 # Playwright / browsers
 .playwright/
 playwright-report/

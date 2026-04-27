@@ -125,6 +125,9 @@ orchestrator/
 - `web` (fetch + search via DuckDuckGo/Brave API)
 - `browser` (Playwright, separate process)
 - `git` (local repo ops)
+- **MCP client** — config-driven loader (`config/mcp_servers.yaml`) that
+  surfaces tools from any number of remote/cloud MCP servers (GitHub,
+  Atlassian, Context7, …) through the same registry as the built-in tools
 - Tool schemas exposed to coder model in OpenAI-style function-calling format
 
 ### Phase 5 — Interfaces
