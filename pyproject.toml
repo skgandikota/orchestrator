@@ -38,6 +38,11 @@ dev = [
 browser = [
     "playwright>=1.40",
 ]
+otel = [
+    "opentelemetry-api>=1.25",
+    "opentelemetry-sdk>=1.25",
+    "opentelemetry-exporter-otlp-proto-http>=1.25",
+]
 
 [project.urls]
 Homepage = "https://github.com/skgandikota/orchestrator"
