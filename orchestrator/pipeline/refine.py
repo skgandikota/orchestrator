@@ -87,13 +87,9 @@ def _render_template(brief: ConsolidatedBrief) -> str:
     template = PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
     data = _brief_to_dict(brief)
     examples = list(brief.examples)
-    examples_block = (
-        "\n".join(f"- {ex}" for ex in examples) if examples else "(none provided)"
-    )
+    examples_block = "\n".join(f"- {ex}" for ex in examples) if examples else "(none provided)"
     files = list(brief.workspace_files)
-    files_block = (
-        "\n".join(f"- {f}" for f in files) if files else "(none provided)"
-    )
+    files_block = "\n".join(f"- {f}" for f in files) if files else "(none provided)"
     brief_json = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
     return (
         template.replace("{brief_json}", brief_json)

@@ -25,15 +25,9 @@ from orchestrator.pipeline.refine import (
 @dataclass
 class FakeBrief:
     intent: str = "Refactor the auth module to use JWT."
-    goals: list[str] = field(
-        default_factory=lambda: ["Replace session cookies", "Keep API stable"]
-    )
-    constraints: list[str] = field(
-        default_factory=lambda: ["No new dependencies", "Python 3.11+"]
-    )
-    examples: list[str] = field(
-        default_factory=lambda: ["login() returns {token, expires_at}"]
-    )
+    goals: list[str] = field(default_factory=lambda: ["Replace session cookies", "Keep API stable"])
+    constraints: list[str] = field(default_factory=lambda: ["No new dependencies", "Python 3.11+"])
+    examples: list[str] = field(default_factory=lambda: ["login() returns {token, expires_at}"])
     workspace_files: list[str] = field(
         default_factory=lambda: ["src/auth.py", "tests/test_auth.py"]
     )
@@ -47,9 +41,7 @@ class ScriptedClient:
         self.calls: list[dict[str, object]] = []
 
     def generate(self, *, model: str, prompt: str, temperature: float) -> str:
-        self.calls.append(
-            {"model": model, "prompt": prompt, "temperature": temperature}
-        )
+        self.calls.append({"model": model, "prompt": prompt, "temperature": temperature})
         if not self.responses:
             raise AssertionError("no more scripted responses")
         return self.responses.pop(0)
