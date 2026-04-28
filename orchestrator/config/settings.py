@@ -59,6 +59,10 @@ class SchedulerSettings(BaseModel):
 class OllamaSettings(BaseModel):
     base_url: str = "http://127.0.0.1:11434"
     request_timeout_seconds: int = Field(120, ge=1)
+    request_timeout_s: float = Field(120.0, gt=0)
+    keep_alive: str = "24h"
+    reasoning_model: str = "qwen2.5:7b"
+    coder_model: str = "qwen2.5-coder:7b"
 
 
 class LoggingSettings(BaseModel):

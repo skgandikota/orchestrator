@@ -15,6 +15,10 @@ min_free_mb_for_load = 5500
 [ollama]
 base_url = "http://127.0.0.1:11434"
 request_timeout_seconds = 120
+request_timeout_s = 120.0
+keep_alive = "24h"
+reasoning_model = "qwen2.5:7b"
+coder_model = "qwen2.5-coder:7b"
 
 [logging]
 level = "INFO"
