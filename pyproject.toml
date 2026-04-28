@@ -61,7 +61,7 @@ include = ["orchestrator*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-orchestrator = ["config/*.toml"]
+orchestrator = ["config/*.toml", "core/migrations/*.sql"]
 
 [tool.setuptools_scm]
 fallback_version = "0.1.0.dev0"

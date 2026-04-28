@@ -19,6 +19,7 @@ __all__ = [
     "Settings",
     "SettingsError",
     "ShellToolSettings",
+    "StateSettings",
     "ToolsSettings",
     "WebToolSettings",
     "load_settings",
@@ -109,6 +110,12 @@ class WebToolSettings(BaseModel):
     brave_api_key: str | None = None
 
 
+class StateSettings(BaseModel):
+    """Settings for the durable state store (``orchestrator.core.state``)."""
+
+    db_path: Path = Field(default=Path("./orchestrator.db"))
+
+
 class ToolsSettings(BaseModel):
     fs: FsToolSettings = Field(default_factory=FsToolSettings)
     shell: ShellToolSettings = Field(default_factory=ShellToolSettings)
@@ -120,6 +127,7 @@ class Settings(BaseModel):
     scheduler: SchedulerSettings = Field(default_factory=SchedulerSettings)
     ollama: OllamaSettings = Field(default_factory=OllamaSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
+    state: StateSettings = Field(default_factory=StateSettings)
     tools: ToolsSettings = Field(default_factory=ToolsSettings)
 
 

@@ -20,6 +20,9 @@ request_timeout_seconds = 120
 level = "INFO"
 json = false
 
+[state]
+db_path = "./orchestrator.db"
+
 [tools.fs]
 # Sandbox root for every filesystem tool. Override with
 # ORCHESTRATOR__TOOLS__FS__WORKSPACE_ROOT.
