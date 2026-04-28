@@ -152,9 +152,7 @@ def test_checkpoint_writes_to_sqlite(refined: RefinedPrompt, tmp_path: Path) -> 
     assert db.exists()
     conn = sqlite3.connect(str(db))
     try:
-        rows = conn.execute(
-            "SELECT step, refined_prompt, plan_json FROM checkpoints"
-        ).fetchall()
+        rows = conn.execute("SELECT step, refined_prompt, plan_json FROM checkpoints").fetchall()
     finally:
         conn.close()
     assert len(rows) == 1
