@@ -103,9 +103,7 @@ class ToolRegistry(Protocol):
 class Scheduler(Protocol):
     """The slice of the LLM-slot scheduler the executor depends on."""
 
-    def acquire(
-        self, model_id: str
-    ) -> AbstractContextManager[Any]:  # pragma: no cover - protocol
+    def acquire(self, model_id: str) -> AbstractContextManager[Any]:  # pragma: no cover - protocol
         ...
 
 

@@ -106,9 +106,7 @@ class FakeCoder:
         messages: list[dict[str, Any]],
         tools: list[dict[str, Any]],
     ) -> Mapping[str, Any]:
-        self.calls.append(
-            {"model": model, "messages": list(messages), "tools": list(tools)}
-        )
+        self.calls.append({"model": model, "messages": list(messages), "tools": list(tools)})
         if not self._responses:
             raise AssertionError("FakeCoder ran out of canned responses")
         return self._responses.pop(0)
@@ -266,8 +264,7 @@ def test_iteration_cap_hit() -> None:
     # Always return a tool call to force the cap.
     cap = 3
     responses = [
-        {"content": None, "tool_calls": [_tool_call("echo", {"text": "x"})]}
-        for _ in range(cap)
+        {"content": None, "tool_calls": [_tool_call("echo", {"text": "x"})]} for _ in range(cap)
     ]
     coder = FakeCoder(responses)
     scheduler = FakeScheduler()
@@ -312,9 +309,7 @@ def test_max_iterations_must_be_positive() -> None:
 
 def test_tool_failure_is_captured_as_structured_output() -> None:
     step = _make_step()
-    coder = FakeCoder(
-        [{"content": None, "tool_calls": [_tool_call("explode", {"x": 1})]}]
-    )
+    coder = FakeCoder([{"content": None, "tool_calls": [_tool_call("explode", {"x": 1})]}])
     scheduler = FakeScheduler()
     state = FakeState()
 
@@ -413,9 +408,7 @@ def test_coerce_args_variants() -> None:
 
 def test_extract_helpers() -> None:
     assert _extract_tool_calls({"tool_calls": [{"id": "x"}]}) == [{"id": "x"}]
-    assert _extract_tool_calls({"message": {"tool_calls": [{"id": "y"}]}}) == [
-        {"id": "y"}
-    ]
+    assert _extract_tool_calls({"message": {"tool_calls": [{"id": "y"}]}}) == [{"id": "y"}]
     assert _extract_tool_calls({}) == []
     assert _extract_content({"content": "hi"}) == "hi"
     assert _extract_content({"message": {"content": "hi"}}) == "hi"
@@ -429,9 +422,7 @@ def test_tool_call_without_function_block() -> None:
         [
             {
                 "content": None,
-                "tool_calls": [
-                    {"name": "echo", "arguments": {"text": "flat"}}
-                ],
+                "tool_calls": [{"name": "echo", "arguments": {"text": "flat"}}],
             },
             {"content": "ok", "tool_calls": []},
         ]
@@ -454,9 +445,7 @@ def test_tool_call_id_falls_back_to_index() -> None:
         [
             {
                 "content": None,
-                "tool_calls": [
-                    {"function": {"name": "echo", "arguments": '{"text": "no-id"}'}}
-                ],
+                "tool_calls": [{"function": {"name": "echo", "arguments": '{"text": "no-id"}'}}],
             },
             {"content": "fin", "tool_calls": []},
         ]
