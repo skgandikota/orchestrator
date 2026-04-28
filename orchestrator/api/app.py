@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
+from orchestrator.api.embeddings import router as embeddings_router
 from orchestrator.api.openai_compat import build_router
 from orchestrator.api.tasks import router as tasks_router
 
@@ -24,6 +25,7 @@ def create_app() -> FastAPI:
         description="Local-first agent orchestrator (OpenAI-compatible API).",
     )
     app.include_router(build_router())
+    app.include_router(embeddings_router, prefix="/v1")
     app.include_router(tasks_router)
     return app
 
