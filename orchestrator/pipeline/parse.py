@@ -143,8 +143,10 @@ _TOOL_CALL_RE = re.compile(
 def load_repair_prompt() -> str:
     """Return the bundled repair prompt template."""
 
-    return resources.files("orchestrator.prompts").joinpath("parse_repair.md").read_text(
-        encoding="utf-8"
+    return (
+        resources.files("orchestrator.prompts")
+        .joinpath("parse_repair.md")
+        .read_text(encoding="utf-8")
     )
 
 

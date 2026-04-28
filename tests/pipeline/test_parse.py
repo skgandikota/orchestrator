@@ -76,9 +76,7 @@ def test_strict_json_object_with_actions_key() -> None:
 
 
 def test_strict_json_top_level_list() -> None:
-    raw = json.dumps(
-        [{"type": "message_to_user", "payload": {"text": "hi"}}]
-    )
+    raw = json.dumps([{"type": "message_to_user", "payload": {"text": "hi"}}])
     result = parse_model_output(raw)
     assert len(result.actions) == 1
     assert result.actions[0].type is ActionType.MESSAGE_TO_USER
@@ -134,7 +132,7 @@ def test_tool_call_regex_strategy() -> None:
 
 def test_tool_call_regex_skips_invalid_json() -> None:
     raw = (
-        '<tool_call>{not json}</tool_call>'
+        "<tool_call>{not json}</tool_call>"
         '<tool_call>{"name": "shell", "arguments": {"cmd": "ls"}}</tool_call>'
     )
     result = parse_model_output(raw)
@@ -143,7 +141,7 @@ def test_tool_call_regex_skips_invalid_json() -> None:
 
 
 def test_tool_call_regex_skips_non_dict_decoded() -> None:
-    raw = '<tool_call>[1, 2, 3]</tool_call>'
+    raw = "<tool_call>[1, 2, 3]</tool_call>"
     result = parse_model_output(raw)
     # No tool_call hits; falls back to message_to_user.
     assert result.actions[0].type is ActionType.MESSAGE_TO_USER
@@ -179,9 +177,7 @@ def test_fallback_for_unstructured_text() -> None:
 
 def test_repair_invoked_when_json_invalid_and_succeeds() -> None:
     bad = "{this is broken"
-    repaired = json.dumps(
-        {"actions": [{"type": "message_to_user", "payload": {"text": "fixed"}}]}
-    )
+    repaired = json.dumps({"actions": [{"type": "message_to_user", "payload": {"text": "fixed"}}]})
     model = FakeModel(repaired)
     result = parse_model_output(bad, model_client=model)
     assert model.prompts, "model should have been called for repair"
@@ -289,9 +285,7 @@ def test_actions_list_filters_non_dict_entries() -> None:
 
 
 def test_action_item_immutable() -> None:
-    item = ActionItem(
-        type=ActionType.MESSAGE_TO_USER, payload={"text": "x"}, order=0
-    )
+    item = ActionItem(type=ActionType.MESSAGE_TO_USER, payload={"text": "x"}, order=0)
     with pytest.raises(ValueError):
         item.order = 5  # type: ignore[misc]
 
