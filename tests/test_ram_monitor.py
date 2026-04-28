@@ -1,4 +1,4 @@
-"""Tests for orchestrator.core.ram_monitor."""
+"""Tests for coracle.core.ram_monitor."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from collections.abc import Iterator
 
 import pytest
 
-from orchestrator.core.ram_monitor import (
+from coracle.core.ram_monitor import (
     RamMonitor,
     RamSnapshot,
     RamState,
@@ -334,7 +334,7 @@ def test_context_manager_starts_and_stops() -> None:
 
 
 def test_default_sampler_uses_psutil(monkeypatch: pytest.MonkeyPatch) -> None:
-    from orchestrator.core import ram_monitor as rm
+    from coracle.core import ram_monitor as rm
 
     class FakeVM:
         available = 8 * 1024 * 1024 * 1024
@@ -350,7 +350,7 @@ def test_default_sampler_uses_psutil(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_default_constructor_uses_psutil_sampler(monkeypatch: pytest.MonkeyPatch) -> None:
-    from orchestrator.core import ram_monitor as rm
+    from coracle.core import ram_monitor as rm
 
     class FakeVM:
         available = 10 * 1024 * 1024 * 1024

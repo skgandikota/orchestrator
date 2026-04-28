@@ -7,14 +7,14 @@ from dataclasses import dataclass, field
 
 import pytest
 
-from orchestrator.pipeline import (
+from coracle.pipeline import (
     ConsolidatedBrief,
     ModelClient,
     RefinedPrompt,
     RefineError,
     refine,
 )
-from orchestrator.pipeline.refine import (
+from coracle.pipeline.refine import (
     DEFAULT_MODEL,
     PROMPT_TEMPLATE_VERSION,
     _parse_response,

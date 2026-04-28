@@ -1,7 +1,7 @@
 # Development Guide
 
 This guide describes how to set up a local development environment and the
-common workflows for working on the orchestrator.
+common workflows for working on the coracle.
 
 ## Prerequisites
 
@@ -65,11 +65,11 @@ pre-commit run --all-files
 
 ## Type checking
 
-`mypy` is configured in strict mode for the `orchestrator/` package; tests and
+`mypy` is configured in strict mode for the `coracle/` package; tests and
 helper scripts under `.github/scripts/` are excluded. Run it with:
 
 ```bash
-mypy orchestrator
+mypy coracle
 ```
 
 ## Editor configuration

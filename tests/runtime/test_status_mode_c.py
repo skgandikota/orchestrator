@@ -1,4 +1,4 @@
-"""Tests for :mod:`orchestrator.runtime.status_c` (status mode C)."""
+"""Tests for :mod:`coracle.runtime.status_c` (status mode C)."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from typing import Any
 
 import pytest
 
-from orchestrator.runtime.status import RamReading, Snapshot
-from orchestrator.runtime.status_c import (
+from coracle.runtime.status import RamReading, Snapshot
+from coracle.runtime.status_c import (
     StatusCCoordinator,
     SynthesisRequest,
     SynthesisResult,
@@ -254,7 +254,7 @@ def test_default_id_factory_produces_unique_hex_ids() -> None:
 def test_status_c_uses_default_clock_and_ram_sampler(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from orchestrator.runtime import status as status_mod
+    from coracle.runtime import status as status_mod
 
     class _VM:
         used = 1024 * 1024 * 10

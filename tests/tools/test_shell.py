@@ -1,4 +1,4 @@
-"""Tests for orchestrator.tools.shell."""
+"""Tests for coracle.tools.shell."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator.config.settings import Settings
-from orchestrator.tools._sandbox import WorkspaceEscapeError
-from orchestrator.tools.shell import CommandResult, DeniedCommandError, run_command
+from coracle.config.settings import Settings
+from coracle.tools._sandbox import WorkspaceEscapeError
+from coracle.tools.shell import CommandResult, DeniedCommandError, run_command
 
 PY = sys.executable
 
@@ -152,7 +152,7 @@ def test_cwd_not_a_directory(tmp_path: Path) -> None:
 
 def test_truncate_oversize_output_helper() -> None:
     """``_truncate`` clips at MAX_OUTPUT_BYTES (line 73)."""
-    from orchestrator.tools.shell import MAX_OUTPUT_BYTES, _truncate
+    from coracle.tools.shell import MAX_OUTPUT_BYTES, _truncate
 
     big = b"x" * (MAX_OUTPUT_BYTES + 50)
     out = _truncate(big)
@@ -162,7 +162,7 @@ def test_truncate_oversize_output_helper() -> None:
 
 def test_kill_short_circuits_when_already_exited() -> None:
     """``_kill`` returns immediately when ``poll`` reports a finished proc."""
-    from orchestrator.tools.shell import _kill
+    from coracle.tools.shell import _kill
 
     class FakeProc:
         pid = 99999
@@ -178,7 +178,7 @@ def test_kill_short_circuits_when_already_exited() -> None:
 
 def test_kill_swallows_exceptions(monkeypatch: pytest.MonkeyPatch) -> None:
     """Errors raised by the OS during kill are silently absorbed (lines 85-86)."""
-    from orchestrator.tools import shell as shell_mod
+    from coracle.tools import shell as shell_mod
 
     class FakeProc:
         pid = 99999
@@ -206,7 +206,7 @@ def test_timeout_cleanup_secondary_timeout(tmp_path: Path, monkeypatch: pytest.M
     """If the cleanup ``communicate`` after kill also times out, we still return (lines 155-156)."""
     import subprocess as _sp
 
-    from orchestrator.tools import shell as shell_mod
+    from coracle.tools import shell as shell_mod
 
     class FakeProc:
         pid = 12345

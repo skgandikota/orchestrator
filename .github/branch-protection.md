@@ -30,7 +30,7 @@ required reviewers via **Repository Rulesets** or **Branch Protection** UI.
 If the app review is not being requested automatically:
 
 1. Visit the app's page on GitHub Marketplace and click **Install**.
-2. Grant access to `skgandikota/orchestrator`.
+2. Grant access to `skgandikota/coracle`.
 3. Confirm the app appears under
    `Settings → Code security → Branch protection rules` (or
    `Rulesets → main → Bypass / Required reviewers`).
@@ -41,7 +41,7 @@ If the app review is not being requested automatically:
 The maintainer can re-apply branch protection by running:
 
 ```bash
-gh api -X PUT repos/skgandikota/orchestrator/branches/main/protection \
+gh api -X PUT repos/skgandikota/coracle/branches/main/protection \
   --input .github/branch-protection.json
 ```
 

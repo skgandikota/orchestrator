@@ -1,4 +1,4 @@
-# Overlay: swap the orchestrator image to the browser-fallback variant
+# Overlay: swap the coracle image to the browser-fallback variant
 # (Playwright + Chromium baked in, ~600 MB). Apply on top of compose.yaml:
 #
 #   docker compose -f compose.yaml -f compose.browser.yaml up -d
@@ -7,11 +7,11 @@
 # search path (#9). Prefer the slim image otherwise.
 
 services:
-  orchestrator:
+  coracle:
     build:
       context: .
       dockerfile: Dockerfile.browser
       target: runtime
-    image: orchestrator:browser
+    image: coracle:browser
     environment:
       ORCH_BROWSER_FALLBACK: "1"

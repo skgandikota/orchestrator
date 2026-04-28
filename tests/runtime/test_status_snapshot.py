@@ -1,4 +1,4 @@
-"""Tests for :mod:`orchestrator.runtime.status` (status mode A)."""
+"""Tests for :mod:`coracle.runtime.status` (status mode A)."""
 
 from __future__ import annotations
 
@@ -8,17 +8,17 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from orchestrator.api.app import create_app
-from orchestrator.api.tasks import (
+from coracle.api.app import create_app
+from coracle.api.tasks import (
     Job as ApiJob,
 )
-from orchestrator.api.tasks import (
+from coracle.api.tasks import (
     JobManager,
     PipelineEvent,
     set_job_manager,
 )
-from orchestrator.runtime import status as status_mod
-from orchestrator.runtime.status import RamReading, Snapshot, snapshot
+from coracle.runtime import status as status_mod
+from coracle.runtime.status import RamReading, Snapshot, snapshot
 
 
 def _ram() -> RamReading:

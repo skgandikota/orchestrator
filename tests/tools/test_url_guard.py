@@ -1,4 +1,4 @@
-"""Tests for ``orchestrator.tools._url_guard``."""
+"""Tests for ``coracle.tools._url_guard``."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from orchestrator.tools._url_guard import UrlGuardError, check_url
+from coracle.tools._url_guard import UrlGuardError, check_url
 
 
 def _resolver_returning(addr: str):

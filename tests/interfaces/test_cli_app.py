@@ -1,4 +1,4 @@
-"""Tests for the typer-based ``orchestrator`` CLI app."""
+"""Tests for the typer-based ``coracle`` CLI app."""
 
 from __future__ import annotations
 
@@ -10,8 +10,8 @@ import httpx
 import pytest
 from typer.testing import CliRunner
 
-from orchestrator.interfaces import cli as cli_mod
-from orchestrator.interfaces.cli import (
+from coracle.interfaces import cli as cli_mod
+from coracle.interfaces.cli import (
     DEFAULT_BASE_URL,
     ENV_BASE_URL,
     _resolve_base_url,

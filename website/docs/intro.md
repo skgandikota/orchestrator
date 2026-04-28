@@ -4,7 +4,7 @@ slug: /intro
 title: Introduction
 ---
 
-# orchestrator
+# coracle
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Status: Pre-alpha](https://img.shields.io/badge/status-pre--alpha-orange.svg)](#status)
@@ -12,7 +12,7 @@ title: Introduction
 [![Platform: macOS (Apple Silicon)](https://img.shields.io/badge/platform-macOS%20(Apple%20Silicon)-lightgrey.svg)](#hardware-target)
 [![Agent-friendly](https://img.shields.io/badge/agent--friendly-yes-brightgreen.svg)](CONTRIBUTING.md)
 
-> A personal-machine AI orchestrator that intelligently splits work between **free-tier "big" cloud AI** (planning) and **local Ollama models** (reasoning + execution), without ever spiking RAM enough to crash the machine. Built to be consumed as a drop-in OpenAI-compatible "model" by [opencode](https://github.com/sst/opencode), [Claude Code](https://github.com/anthropics/claude-code), [codex](https://github.com/openai/codex), Cursor, Continue, etc.
+> A personal-machine AI coracle that intelligently splits work between **free-tier "big" cloud AI** (planning) and **local Ollama models** (reasoning + execution), without ever spiking RAM enough to crash the machine. Built to be consumed as a drop-in OpenAI-compatible "model" by [opencode](https://github.com/sst/opencode), [Claude Code](https://github.com/anthropics/claude-code), [codex](https://github.com/openai/codex), Cursor, Continue, etc.
 
 ## Why this exists
 
@@ -23,7 +23,7 @@ Big AI models are great at planning. Small local models are great at executing. 
 - **Coder model** (`qwen2.5-coder:7b`) executes steps locally with a full tool belt (fs, shell, web, browser, git).
 - **Single-LLM-slot scheduler** ensures only one 7B model is in RAM at a time.
 - **SQLite job state** powers instant status responses with zero RAM cost.
-- **One model name to the consumer:** `orchestrator`. Auto-routing is invisible.
+- **One model name to the consumer:** `coracle`. Auto-routing is invisible.
 
 ## Architecture at a glance
 
@@ -50,15 +50,15 @@ Full design details: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## How is this different from LiteLLM?
 
-Short version: **LiteLLM is a paid-API gateway built for throughput; `orchestrator` is a personal-machine scheduler built for $0 budgets and a 16GB RAM ceiling.** We use LiteLLM's SDK as our provider abstraction, but the product is a different thing entirely — see [`docs/VS_LITELLM.md`](docs/VS_LITELLM.md) for the full table.
+Short version: **LiteLLM is a paid-API gateway built for throughput; `coracle` is a personal-machine scheduler built for $0 budgets and a 16GB RAM ceiling.** We use LiteLLM's SDK as our provider abstraction, but the product is a different thing entirely — see [`docs/VS_LITELLM.md`](docs/VS_LITELLM.md) for the full table.
 
-| | LiteLLM | `orchestrator` |
+| | LiteLLM | `coracle` |
 |---|---|---|
 | Cost model | Pay-per-token | $0 — free tiers + local + headless-browser fallback |
-| Topology | Stateless proxy | Stateful job orchestrator |
+| Topology | Stateless proxy | Stateful job coracle |
 | Inference | Cloud-first | Local-first |
 | RAM target | Server-class | 16GB Mac M1 |
-| Tool execution | Caller's job | Orchestrator runs the tools (sandbox + MCP) |
+| Tool execution | Caller's job | Coracle runs the tools (sandbox + MCP) |
 | Status / progress | None | First-class, never loads an LLM |
 
 ## Status
@@ -99,14 +99,14 @@ Mac M1 Pro, 16 GB RAM. Designed to never exceed ~11 GB resident.
 
 ## Wiring external MCP servers
 
-The orchestrator can consume any number of remote/cloud MCP servers as
+The coracle can consume any number of remote/cloud MCP servers as
 local tools. Copy the example config and edit it:
 
 ```bash
 cp config/mcp_servers.yaml.example config/mcp_servers.yaml
 # edit config/mcp_servers.yaml — supports stdio | http | sse transports
-orchestrator mcp list      # show connected servers + tool counts
-orchestrator mcp reload    # re-read the config without restarting
+coracle mcp list      # show connected servers + tool counts
+coracle mcp reload    # re-read the config without restarting
 ```
 
 Environment variables in the config (e.g. `${GITHUB_TOKEN}`) are expanded

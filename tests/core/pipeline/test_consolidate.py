@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator.core.pipeline import (
+from coracle.core.pipeline import (
     DEFAULT_MAX_FILES,
     EXCLUDED_DIRS,
     MAX_FILE_SIZE_BYTES,
@@ -20,7 +20,7 @@ from orchestrator.core.pipeline import (
     WorkspaceSummary,
     consolidate,
 )
-from orchestrator.core.workspace import FileStat, Workspace
+from coracle.core.workspace import FileStat, Workspace
 
 # ---------------------------------------------------------------------------
 # Fakes

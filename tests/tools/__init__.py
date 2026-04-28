@@ -1,1 +1,1 @@
-"""Tests for orchestrator.tools."""
+"""Tests for coracle.tools."""

@@ -3,12 +3,12 @@ sidebar_position: 2
 title: Architecture
 ---
 
-> Mirrored from the canonical [docs/PLAN.md](https://github.com/skgandikota/orchestrator/blob/main/docs/PLAN.md) in the repo. Edit there.
+> Mirrored from the canonical [docs/PLAN.md](https://github.com/skgandikota/coracle/blob/main/docs/PLAN.md) in the repo. Edit there.
 
-# Orchestrator — Implementation Plan
+# Coracle — Implementation Plan
 
 ## Problem Statement
-Build a personal-machine AI orchestrator (Mac M1 Pro, 16GB RAM) that intelligently splits work between **free-tier "big" cloud AI** (planning) and **local Ollama models** (reasoning + execution), without ever spiking RAM enough to crash the machine. Consumed by coding agents like Claude Code, opencode, and codex.
+Build a personal-machine AI coracle (Mac M1 Pro, 16GB RAM) that intelligently splits work between **free-tier "big" cloud AI** (planning) and **local Ollama models** (reasoning + execution), without ever spiking RAM enough to crash the machine. Consumed by coding agents like Claude Code, opencode, and codex.
 
 ## Core Concept
 ```
@@ -40,14 +40,14 @@ User query (from opencode / Claude Code / codex via OpenAI-compatible /v1/chat/c
 │  (research class = same flow but biased toward web tools) │
 └────────────────────────────────────────────────────────────┘
 ```
-The classifier is the always-on front door. The user just talks to one model called `orchestrator` — routing is invisible.
+The classifier is the always-on front door. The user just talks to one model called `coracle` — routing is invisible.
 
 ## Key Architectural Decisions (confirmed with user)
 
 | Area | Decision |
 |------|----------|
 | Language | Python |
-| External interface | **OpenAI-compatible HTTP API** (`/v1/chat/completions`, `/v1/models`) **+ MCP server + native HTTP/CLI**, all sharing one core. The OpenAI-compatible endpoint is the primary integration path — it lets opencode, Claude Code, codex, Cursor, Continue, etc. treat the orchestrator as a drop-in "model" via `base_url=http://localhost:PORT/v1`. |
+| External interface | **OpenAI-compatible HTTP API** (`/v1/chat/completions`, `/v1/models`) **+ MCP server + native HTTP/CLI**, all sharing one core. The OpenAI-compatible endpoint is the primary integration path — it lets opencode, Claude Code, codex, Cursor, Continue, etc. treat the coracle as a drop-in "model" via `base_url=http://localhost:PORT/v1`. |
 | Big-AI providers | Multi-provider via `litellm` + custom adapters: Gemini API, Groq API, Ollama Cloud, headless-browser fallback (Playwright) for Claude/ChatGPT/Gemini web |
 | Local reasoning model | `qwen2.5:7b` (Ollama) — resident by default |
 | Local coder model | `qwen2.5-coder:7b` (Ollama) — swapped in on demand |
@@ -59,7 +59,7 @@ The classifier is the always-on front door. The user just talks to one model cal
 ## High-Level Architecture
 
 ```
-orchestrator/
+coracle/
 ├── core/
 │   ├── classifier.py       # intent router on resident reasoning model
 │   │                       #   in: user msg + brief context; out: {class, confidence, reason}
@@ -81,7 +81,7 @@ orchestrator/
 ├── interfaces/
 │   ├── openai_compat.py    # /v1/chat/completions, /v1/models, /v1/completions — OpenAI-spec
 │   │                       #   PRIMARY integration: opencode/Claude Code/codex point base_url here
-│   │                       #   Exposes named "model" profiles (e.g. orchestrator-fast, orchestrator-deep)
+│   │                       #   Exposes named "model" profiles (e.g. coracle-fast, coracle-deep)
 │   │                       #   Streams SSE in OpenAI delta format
 │   ├── mcp_server.py       # stdio MCP — alternate path, exposes job control as tools
 │   ├── http_api.py         # Native FastAPI — /jobs, /jobs/{id}, /jobs/{id}/stream, /status
@@ -94,7 +94,7 @@ orchestrator/
 ```
 
 ## Critical Design Rules
-1. **One model name to the outside world: `orchestrator`.** The resident reasoning model auto-classifies and routes — users never pick a mode. Named profiles exist only as optional overrides.
+1. **One model name to the outside world: `coracle`.** The resident reasoning model auto-classifies and routes — users never pick a mode. Named profiles exist only as optional overrides.
 2. **Never two 7B models loaded simultaneously.** Scheduler holds a mutex; swap = unload current → load next.
 3. **Every coder step is a checkpoint.** Step boundary = safe swap point + DB write.
 4. **Status queries never block on the scheduler** — classifier short-circuits to DB read.
@@ -140,13 +140,13 @@ orchestrator/
 ### Phase 5 — Interfaces
 - **OpenAI-compatible API (primary)** — `/v1/chat/completions` (stream + non-stream), `/v1/models`, `/v1/completions`
   - Each request is internally turned into a job; the response stream emits the full pipeline (classify→consolidate→refine→plan→execute→verify) as OpenAI-format `delta` chunks
-  - **Default model: `orchestrator`** — single name, auto-routed. The resident reasoning model classifies every incoming request as `fast | deep | research | status` and dispatches to the right internal pipeline. The user/client never has to choose.
+  - **Default model: `coracle`** — single name, auto-routed. The resident reasoning model classifies every incoming request as `fast | deep | research | status` and dispatches to the right internal pipeline. The user/client never has to choose.
   - Named profiles exist only as **optional overrides** for power users/scripts that want to force a mode:
-    - `orchestrator` (default, auto-router) ← what opencode/Claude Code/codex select
-    - `orchestrator-fast` — force local-only, no big-AI hop
-    - `orchestrator-deep` — force full pipeline with big-AI planning
-    - `orchestrator-research` — force web/browser-heavy mode
-    - `orchestrator-status` — force pure DB/narrator status mode
+    - `coracle` (default, auto-router) ← what opencode/Claude Code/codex select
+    - `coracle-fast` — force local-only, no big-AI hop
+    - `coracle-deep` — force full pipeline with big-AI planning
+    - `coracle-research` — force web/browser-heavy mode
+    - `coracle-status` — force pure DB/narrator status mode
   - Drop-in usable from opencode, Claude Code (via OpenAI-compat shim), codex, Cursor, Continue, any OpenAI SDK
 - **Native HTTP API** — `POST /jobs`, `GET /jobs/{id}`, `GET /jobs/{id}/stream` (SSE), `POST /jobs/{id}/status` (3 modes), `POST /jobs/{id}/cancel`
 - **MCP server (stdio)** — `submit_job`, `get_status`, `stream_job`, `cancel_job` for clients that prefer tools over a model endpoint
@@ -163,33 +163,33 @@ orchestrator/
 - Crash recovery: on startup, resume in-flight jobs from SQLite
 - Prompt versioning + eval harness
 - Docs + example consumer configs:
-  - **opencode**: add provider with `base_url=http://localhost:PORT/v1`, any api_key, model=`orchestrator-deep`
+  - **opencode**: add provider with `base_url=http://localhost:PORT/v1`, any api_key, model=`coracle-deep`
   - **Claude Code**: via OpenAI-compat shim or MCP server registration
   - **codex / Cursor / Continue**: same OpenAI-compatible base_url pattern
   - Example commands and config snippets for each
 
 ## Open Questions / Things to Decide Later
 - Exact RAM thresholds (will tune empirically in Phase 1 — propose: hard cap 11GB, soft cap 9GB)
-- Whether to run Ollama as system service or orchestrator-managed subprocess
+- Whether to run Ollama as system service or coracle-managed subprocess
 - Auth for HTTP API (probably localhost-only + token in v1)
 - Final recommendation on consumer (Claude Code vs opencode vs codex) — defer to Phase 7 after testing all three against the MCP server
 
 ## Success Criteria
-- **opencode (and Claude Code / codex) can be configured to use the orchestrator as a model** by pointing at `http://localhost:PORT/v1` — no code changes in those clients.
+- **opencode (and Claude Code / codex) can be configured to use the coracle as a model** by pointing at `http://localhost:PORT/v1` — no code changes in those clients.
 - A single query like *"Read this repo, find the slowest function, optimize it, run tests"* runs end-to-end using free APIs + local models with no RAM crash.
 - User can interrupt mid-job to ask status and get an answer in <2s without crashing the coder.
 - Switching big-AI provider (API → browser fallback) is transparent to the consumer.
 
 ## How opencode Will Use This (concrete flow)
-1. Start orchestrator: `orchestrator serve` → listens on `http://localhost:8765`.
+1. Start coracle: `coracle serve` → listens on `http://localhost:8765`.
 2. In opencode config, register a provider:
    ```
    providers:
-     orchestrator:
+     coracle:
        base_url: http://localhost:8765/v1
        api_key: local
    ```
-3. Select model `orchestrator` (just one — no fast/deep/research choice for the user).
-4. opencode sends a normal OpenAI chat-completions request → resident reasoning model classifies intent → orchestrator dispatches to the right internal pipeline (fast/deep/research/status) → streams results back in OpenAI delta format.
+3. Select model `coracle` (just one — no fast/deep/research choice for the user).
+4. opencode sends a normal OpenAI chat-completions request → resident reasoning model classifies intent → coracle dispatches to the right internal pipeline (fast/deep/research/status) → streams results back in OpenAI delta format.
 5. opencode displays it like any other model response — but under the hood it just used Gemini/Groq + qwen2.5 locally, picked the cheapest pipeline that fits, and stayed RAM-safe.
 

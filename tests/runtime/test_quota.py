@@ -1,4 +1,4 @@
-"""Tests for :mod:`orchestrator.runtime.quota`."""
+"""Tests for :mod:`coracle.runtime.quota`."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator.runtime.quota import (
+from coracle.runtime.quota import (
     DEFAULT_QUOTAS_PATH,
     QuotaLimits,
     QuotaTracker,
@@ -242,7 +242,7 @@ def test_quota_usage_exhausted_property() -> None:
 def test_fallback_chain_skips_exhausted_provider(
     db_path: Path, limits: dict[str, QuotaLimits]
 ) -> None:
-    from orchestrator.providers.fallback import FallbackChain, QuotaExceeded
+    from coracle.providers.fallback import FallbackChain, QuotaExceeded
 
     class StubProvider:
         def __init__(self, pid: str, value: str) -> None:

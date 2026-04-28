@@ -1,4 +1,4 @@
-"""Tests for orchestrator.core.state."""
+"""Tests for coracle.core.state."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator.core.state import (
+from coracle.core.state import (
     Job,
     JobStatus,
     StateStore,
@@ -345,9 +345,9 @@ def test_db_path_property(tmp_path: Path) -> None:
 
 
 def test_settings_exposes_state_section() -> None:
-    from orchestrator.config.settings import Settings, StateSettings, load_settings
+    from coracle.config.settings import Settings, StateSettings, load_settings
 
     s = load_settings()
     assert isinstance(s, Settings)
     assert isinstance(s.state, StateSettings)
-    assert Path(s.state.db_path).name == "orchestrator.db"
+    assert Path(s.state.db_path).name == "coracle.db"

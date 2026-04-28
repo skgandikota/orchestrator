@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from orchestrator.pipeline import (
+from coracle.pipeline import (
     ExecutableStep,
     OllamaClient,
     Plan,
@@ -17,7 +17,7 @@ from orchestrator.pipeline import (
     VerifyDecision,
     verify,
 )
-from orchestrator.pipeline.verify import (
+from coracle.pipeline.verify import (
     _MODEL,
     _fail_open,
     _format_remaining,
@@ -297,7 +297,7 @@ def test_verify_decision_requires_non_empty_reason() -> None:
 
 
 def test_coerce_passthrough_for_decision_and_bytes() -> None:
-    from orchestrator.pipeline.verify import _coerce
+    from coracle.pipeline.verify import _coerce
 
     pre = VerifyDecision(action="done", reason="r", next_step_hint=None)
     assert _coerce(pre) is pre

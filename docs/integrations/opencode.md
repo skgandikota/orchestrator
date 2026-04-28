@@ -1,7 +1,7 @@
-# Using `orchestrator` with **opencode**
+# Using `coracle` with **opencode**
 
 This guide wires the [opencode](https://github.com/opencode-ai/opencode) open-source
-terminal coding assistant to a locally-running `orchestrator` instance via the
+terminal coding assistant to a locally-running `coracle` instance via the
 OpenAI-compatible HTTP endpoint shipped in Phase 5 (#11).
 
 The whole walkthrough should take **under five minutes** on a fresh machine.
@@ -10,20 +10,20 @@ The whole walkthrough should take **under five minutes** on a fresh machine.
 > speaks the OpenAI Chat Completions wire format, so any server that exposes
 > `/v1/chat/completions` and `/v1/models` can be plugged in as a provider.
 >
-> **Why orchestrator?** opencode by itself just relays prompts to a single
-> model. `orchestrator` runs the full **classify → refine → execute → verify**
+> **Why coracle?** opencode by itself just relays prompts to a single
+> model. `coracle` runs the full **classify → refine → execute → verify**
 > pipeline on top of local Qwen models, giving opencode users multi-step
 > reasoning, model swapping, and offline operation — all behind the same
 > OpenAI-compatible URL opencode already knows how to call.
 
-> **Placeholder screenshot:** `docs/integrations/img/opencode-using-orchestrator.png`
+> **Placeholder screenshot:** `docs/integrations/img/opencode-using-coracle.png`
 > *(image to be added)*
 
 ---
 
 ## Prerequisites
 
-- `orchestrator` installed and importable (`pip install -e .` from the repo root).
+- `coracle` installed and importable (`pip install -e .` from the repo root).
 - Local Qwen models pulled and runnable (see `docs/PLAN.md` § Phase 2).
 - Node.js ≥ 18 (opencode is distributed via npm).
 - ~12 GB free RAM on Apple Silicon / 16 GB on x86 for the default profile.
@@ -42,17 +42,17 @@ latest install command — the rest of this guide is install-method agnostic.
 
 ---
 
-## Step 1 — Start `orchestrator serve`
+## Step 1 — Start `coracle serve`
 
 ```bash
-orchestrator serve --port 8000
+coracle serve --port 8000
 ```
 
 You should see a log line similar to:
 
 ```
-INFO     orchestrator.server  Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO     orchestrator.server  models registered: orchestrator, orchestrator-fast, orchestrator-deep
+INFO     coracle.server  Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO     coracle.server  models registered: coracle, coracle-fast, coracle-deep
 ```
 
 Read the bound port either from this log line or from the `--port` flag you
@@ -71,14 +71,14 @@ Expected shape:
 {
   "object": "list",
   "data": [
-    { "id": "orchestrator", "object": "model", "owned_by": "local" },
-    { "id": "orchestrator-fast", "object": "model", "owned_by": "local" },
-    { "id": "orchestrator-deep", "object": "model", "owned_by": "local" }
+    { "id": "coracle", "object": "model", "owned_by": "local" },
+    { "id": "coracle-fast", "object": "model", "owned_by": "local" },
+    { "id": "coracle-deep", "object": "model", "owned_by": "local" }
   ]
 }
 ```
 
-If you do not see the `orchestrator` id, jump to **Troubleshooting → model not listed**.
+If you do not see the `coracle` id, jump to **Troubleshooting → model not listed**.
 
 ---
 
@@ -98,21 +98,21 @@ Add (or merge) the following block:
 {
   "provider": "openai-compatible",
   "providers": {
-    "orchestrator-local": {
+    "coracle-local": {
       "type": "openai-compatible",
       "base_url": "http://localhost:8000/v1",
       "api_key": "local-no-auth",
-      "models": ["orchestrator"]
+      "models": ["coracle"]
     }
   },
-  "model": "orchestrator-local/orchestrator"
+  "model": "coracle-local/coracle"
 }
 ```
 
 ### Why is `api_key` required if it is unused?
 
 The OpenAI client libraries that opencode is built on top of refuse to send a
-request without an `Authorization: Bearer …` header. `orchestrator` ignores the
+request without an `Authorization: Bearer …` header. `coracle` ignores the
 value entirely (it is a local-only server with no auth), but opencode will hard-
 error before the request is dispatched if the field is missing. Any non-empty
 string works — `local-no-auth` is just a self-documenting placeholder.
@@ -123,31 +123,31 @@ string works — `local-no-auth` is just a self-documenting placeholder.
 
 ---
 
-## Step 3 — Select the `orchestrator` model
+## Step 3 — Select the `coracle` model
 
 ### CLI flag (one-shot)
 
 ```bash
-opencode --model orchestrator-local/orchestrator "summarize this repo"
+opencode --model coracle-local/coracle "summarize this repo"
 ```
 
 ### Interactive UI
 
 Launch opencode without arguments and press the model-picker hotkey
-(`Ctrl+M` in current builds), then choose **orchestrator-local/orchestrator**
+(`Ctrl+M` in current builds), then choose **coracle-local/coracle**
 from the list.
 
 ### Optional: forcing a pipeline
 
-`orchestrator` exposes two power-user model ids alongside the default:
+`coracle` exposes two power-user model ids alongside the default:
 
 | Model id              | Behavior                                                |
 |-----------------------|---------------------------------------------------------|
-| `orchestrator`        | Auto-classify; pipeline depth chosen per request.       |
-| `orchestrator-fast`   | Skip refine/verify — single-shot, lowest latency.       |
-| `orchestrator-deep`   | Full pipeline + extra verification pass.                |
+| `coracle`        | Auto-classify; pipeline depth chosen per request.       |
+| `coracle-fast`   | Skip refine/verify — single-shot, lowest latency.       |
+| `coracle-deep`   | Full pipeline + extra verification pass.                |
 
-Swap `models: ["orchestrator"]` to `["orchestrator", "orchestrator-fast", "orchestrator-deep"]`
+Swap `models: ["coracle"]` to `["coracle", "coracle-fast", "coracle-deep"]`
 in `config.json` to expose all three. See `docs/model-profiles.md` for the
 underlying Qwen mapping (`qwen2.5-coder` for code, `qwen2.5` for reasoning).
 
@@ -155,22 +155,22 @@ underlying Qwen mapping (`qwen2.5-coder` for code, `qwen2.5` for reasoning).
 
 ## Step 4 — Verify end-to-end
 
-In one terminal, keep `orchestrator serve` running with `--log-level info`.
+In one terminal, keep `coracle serve` running with `--log-level info`.
 In another:
 
 ```bash
-opencode --model orchestrator-local/orchestrator "hello, summarize this repo"
+opencode --model coracle-local/coracle "hello, summarize this repo"
 ```
 
-You should see opencode stream tokens back, and `orchestrator`'s log should
+You should see opencode stream tokens back, and `coracle`'s log should
 show the classify → refine → execute → verify trace:
 
 ```
-INFO  orchestrator.pipeline  classify   route=code-summary  model=qwen2.5-coder
-INFO  orchestrator.pipeline  refine     tokens_in=412  tokens_out=87
-INFO  orchestrator.pipeline  execute    streaming=true
-INFO  orchestrator.pipeline  verify     ok=true
-INFO  orchestrator.server    POST /v1/chat/completions 200  duration_ms=… stream=true
+INFO  coracle.pipeline  classify   route=code-summary  model=qwen2.5-coder
+INFO  coracle.pipeline  refine     tokens_in=412  tokens_out=87
+INFO  coracle.pipeline  execute    streaming=true
+INFO  coracle.pipeline  verify     ok=true
+INFO  coracle.server    POST /v1/chat/completions 200  duration_ms=… stream=true
 ```
 
 If you see all four pipeline stages and a `200` on `/v1/chat/completions`,
@@ -183,7 +183,7 @@ curl -s http://localhost:8000/v1/chat/completions \
   -H "Authorization: Bearer local-no-auth" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "orchestrator",
+    "model": "coracle",
     "messages": [{"role": "user", "content": "hello, summarize this repo"}],
     "stream": false
   }' | jq '.choices[0].message.content'
@@ -204,7 +204,7 @@ curl -v http://localhost:8000/v1/models
 lsof -iTCP:8000 -sTCP:LISTEN
 ```
 
-Restart with `orchestrator serve --port 8000` and confirm the log line shows
+Restart with `coracle serve --port 8000` and confirm the log line shows
 the same port you put in `config.json`.
 
 ### `401 Unauthorized`
@@ -219,7 +219,7 @@ is missing or empty in `config.json`. Set it to any non-empty string
    ```bash
    curl -s http://localhost:8000/v1/models | jq '.data[].id'
    ```
-   You should see `orchestrator` in the output.
+   You should see `coracle` in the output.
 2. Confirm `config.json` parses (opencode silently ignores malformed configs):
    ```bash
    jq . ~/.config/opencode/config.json
@@ -231,21 +231,21 @@ is missing or empty in `config.json`. Set it to any non-empty string
 The first request loads the Qwen weights into RAM; subsequent calls are fast.
 If you are hitting swap:
 
-- Use `orchestrator-fast` to keep only one model resident.
-- Lower context window via `orchestrator serve --max-context 4096`.
+- Use `coracle-fast` to keep only one model resident.
+- Lower context window via `coracle serve --max-context 4096`.
 - Close other RAM-heavy apps (Chrome, Docker Desktop, simulators).
 
 ### Long pause when switching between code and reasoning prompts
 
-`orchestrator` swaps between `qwen2.5-coder` and `qwen2.5` based on classify
+`coracle` swaps between `qwen2.5-coder` and `qwen2.5` based on classify
 output. On constrained hardware this swap can take several seconds. Pin a
-single profile via `orchestrator-fast` (always coder) or set
-`ORCHESTRATOR_PIN_MODEL=qwen2.5-coder` in the server's environment.
+single profile via `coracle-fast` (always coder) or set
+`CORACLE_PIN_MODEL=qwen2.5-coder` in the server's environment.
 
 ### Falling back to a hosted free-tier provider
 
 If local inference is unavailable (no GPU, low RAM, travel), keep your
-`orchestrator-local` provider block and add a second free-tier provider
+`coracle-local` provider block and add a second free-tier provider
 alongside it in `config.json`. opencode lets you switch providers per-session
 with `--model <provider>/<model>`, so your workflow stays identical — only the
 backend changes.

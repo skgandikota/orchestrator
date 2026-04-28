@@ -7,7 +7,7 @@ early_access: false
 tone_instructions: >
   Be terse, technical, and direct. Skip praise and pleasantries. Focus on
   correctness, security, RAM/perf footprint (this is a memory-constrained
-  orchestrator), and Python idioms. Cite line numbers. Do not repeat what
+  coracle), and Python idioms. Cite line numbers. Do not repeat what
   static analysis already catches.
 
 reviews:
@@ -29,12 +29,12 @@ reviews:
     - "!**/.venv/**"
     - "!docs/**/*.md"
   path_instructions:
-    - path: "orchestrator/tools/**"
+    - path: "coracle/tools/**"
       instructions: >
         These are tool wrappers invoked by the coder model. Validate that all
         external inputs (paths, URLs, shell args) are sanitized. Reject any
         unbounded recursion, unscoped subprocess, or unbounded file reads.
-    - path: "orchestrator/models/**"
+    - path: "coracle/models/**"
       instructions: >
         Check RAM budgeting carefully - the host has 16GB. Flag any unbounded
         token buffers, missing model unload paths, or sync calls in async code.

@@ -27,11 +27,11 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Orchestrator runtime
+# Coracle runtime
 *.db
 *.sqlite
 *.sqlite3
-.orchestrator/
+.coracle/
 logs/
 .env
 .env.local

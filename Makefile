@@ -23,7 +23,7 @@ test: ## Run the test suite
 	pytest -q
 
 cov: ## Run tests with coverage gate (>=95%)
-	pytest --cov=orchestrator --cov-report=term-missing --cov-fail-under=95
+	pytest --cov=coracle --cov-report=term-missing --cov-fail-under=95
 
 precommit: ## Run pre-commit on all files
 	pre-commit run --all-files
@@ -32,23 +32,23 @@ clean: ## Remove caches and build artifacts
 	rm -rf .pytest_cache .ruff_cache .mypy_cache .coverage htmlcov build dist *.egg-info
 	find . -type d -name __pycache__ -exec rm -rf {} +
 
-serve: ## Run the orchestrator CLI (placeholder)
-	python -m orchestrator
+serve: ## Run the coracle CLI (placeholder)
+	python -m coracle
 
-IMAGE ?= orchestrator:slim
+IMAGE ?= coracle:slim
 
-docker-build: ## Build the slim production image (orchestrator:slim)
+docker-build: ## Build the slim production image (coracle:slim)
 	DOCKER_BUILDKIT=1 docker build -t $(IMAGE) --target runtime .
 
 docker-run: ## Run the slim image with sensible local defaults
 	docker run --rm -p 8000:8000 \
-		-v $(PWD)/config:/etc/orchestrator:ro \
-		-v orchestrator-data:/var/lib/orchestrator \
+		-v $(PWD)/config:/etc/coracle:ro \
+		-v coracle-data:/var/lib/coracle \
 		$(IMAGE)
 
 # --- docker compose -----------------------------------------------------
 
-compose-up: ## Bring up the compose stack (ollama + orchestrator)
+compose-up: ## Bring up the compose stack (ollama + coracle)
 	docker compose up -d
 
 compose-down: ## Stop the compose stack (preserves named volumes)

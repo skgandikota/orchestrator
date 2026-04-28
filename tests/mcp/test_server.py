@@ -1,4 +1,4 @@
-"""Tests for the orchestrator MCP stdio server."""
+"""Tests for the coracle MCP stdio server."""
 
 from __future__ import annotations
 
@@ -12,9 +12,9 @@ import mcp.types as mt
 import pytest
 from mcp.server import Server
 
-from orchestrator.api.tasks import JobStatus, PipelineEvent
-from orchestrator.mcp import server as mcp_server
-from orchestrator.mcp.server import (
+from coracle.api.tasks import JobStatus, PipelineEvent
+from coracle.mcp import server as mcp_server
+from coracle.mcp.server import (
     HANDLERS,
     SERVER_NAME,
     SERVER_VERSION,
@@ -279,7 +279,7 @@ def test_run_invokes_asyncio_run_with_main_coroutine() -> None:
 # Package surface                                                             #
 # --------------------------------------------------------------------------- #
 def test_package_reexports_public_api() -> None:
-    from orchestrator import mcp as pkg
+    from coracle import mcp as pkg
 
     assert pkg.build_server is build_server
     assert pkg.main is main
@@ -289,12 +289,12 @@ def test_package_reexports_public_api() -> None:
 def test_dunder_main_module_imports_run() -> None:
     import importlib
 
-    mod = importlib.import_module("orchestrator.mcp.__main__")
+    mod = importlib.import_module("coracle.mcp.__main__")
     assert mod.run is run
 
 
 def test_interfaces_shim_reexports_public_api() -> None:
-    from orchestrator.interfaces import mcp_server as shim
+    from coracle.interfaces import mcp_server as shim
 
     assert shim.build_server is build_server
     assert shim.main is main

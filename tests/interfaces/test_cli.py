@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from orchestrator.core.recovery import Job, recover_jobs
-from orchestrator.interfaces.cli import cancel_job, list_recoverable, resume_job
+from coracle.core.recovery import Job, recover_jobs
+from coracle.interfaces.cli import cancel_job, list_recoverable, resume_job
 from tests.core.test_recovery import FakeStateStore
 
 

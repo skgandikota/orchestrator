@@ -1,6 +1,6 @@
 # Observability — structured audit log
 
-The orchestrator emits a single, append-only stream of structured events
+The coracle emits a single, append-only stream of structured events
 to a local SQLite database. Every classifier decision, model swap, tool
 call, big-AI call and error is recorded as one row in `audit_events`.
 
@@ -34,7 +34,7 @@ Indexes on `ts` and `(actor, action)` for fast tail / filter queries.
 ## Public API
 
 ```python
-from orchestrator.observability import AuditLog, record, query
+from coracle.observability import AuditLog, record, query
 
 # Use the process-wide default (lazy in-memory until configured):
 record("scheduler", "model_swap", target="llama3:8b",
@@ -69,11 +69,11 @@ The OTel SDK is **not** a hard dependency. Install the extra and pass an
 exporter to opt in:
 
 ```bash
-pip install 'orchestrator[otel]'
+pip install 'coracle[otel]'
 ```
 
 ```python
-from orchestrator.observability import AuditLog, OTelExporter
+from coracle.observability import AuditLog, OTelExporter
 
 exporter = OTelExporter(endpoint="http://localhost:4318/v1/traces")
 log = AuditLog("/var/lib/orch/audit.sqlite", exporter=exporter)

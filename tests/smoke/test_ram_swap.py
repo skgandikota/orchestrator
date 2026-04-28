@@ -3,7 +3,7 @@
 Two variants ship in this module:
 
 * ``@pytest.mark.smoke`` -- mocked, hermetic, runs in CI. Wires the real
-  :class:`~orchestrator.core.scheduler.LlmSlotScheduler` to a fake Ollama
+  :class:`~coracle.core.scheduler.LlmSlotScheduler` to a fake Ollama
   client and a deterministic RAM sampler. Asserts the architectural
   invariants of the Phase 1 RAM thesis: never two 7B models loaded at once,
   unload happens with ``keep_alive=0`` *before* the next load, RAM trace
@@ -26,8 +26,8 @@ from typing import Any
 
 import pytest
 
-from orchestrator.core.ram_monitor import RamMonitor, RamSnapshot
-from orchestrator.core.scheduler import LlmSlotScheduler
+from coracle.core.ram_monitor import RamMonitor, RamSnapshot
+from coracle.core.scheduler import LlmSlotScheduler
 
 MODEL_A = "qwen2.5:7b"
 MODEL_B = "qwen2.5-coder:7b"

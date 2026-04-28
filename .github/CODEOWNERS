@@ -1,4 +1,4 @@
-# Code owners for the orchestrator repo.
+# Code owners for the coracle repo.
 #
 # Anything matching a pattern below requires the listed owners to approve the
 # pull request before it can be merged (when "Require review from Code Owners"
@@ -25,17 +25,17 @@
 /.github/                        @skgandikota
 
 # Core orchestration & scheduler — touch with extra care
-/orchestrator/core/              @skgandikota
+/coracle/core/              @skgandikota
 
 # Model adapters (local + big AI + browser drivers)
-/orchestrator/models/            @skgandikota
+/coracle/models/            @skgandikota
 
 # External interfaces (OpenAI-compat / HTTP / MCP / CLI)
-/orchestrator/interfaces/        @skgandikota
+/coracle/interfaces/        @skgandikota
 
 # Tool belt
-/orchestrator/tools/             @skgandikota
+/coracle/tools/             @skgandikota
 
 # Prompt templates and evaluation harness
-/orchestrator/prompts/           @skgandikota
-/orchestrator/evals/             @skgandikota
+/coracle/prompts/           @skgandikota
+/coracle/evals/             @skgandikota

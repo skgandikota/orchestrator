@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from orchestrator.tools import default_registry as _default_registry  # noqa: F401
-from orchestrator.tools.registry import Registry, Tool, ToolResult, default_registry
+from coracle.tools import default_registry as _default_registry  # noqa: F401
+from coracle.tools.registry import Registry, Tool, ToolResult, default_registry
 
 
 def _add(a: int, b: int) -> int:
@@ -180,14 +180,14 @@ def test_openai_tools_spec_sorted_by_name() -> None:
 
 
 def test_default_registry_is_singleton_module_export() -> None:
-    from orchestrator.tools import registry as registry_mod
+    from coracle.tools import registry as registry_mod
 
     assert default_registry is registry_mod.default_registry
 
 
 def test_phase4_tools_registered_on_default_registry() -> None:
-    import orchestrator.tools  # noqa: F401  -- ensure registrations ran
-    from orchestrator.tools._registrations import register_default_tools
+    import coracle.tools  # noqa: F401  -- ensure registrations ran
+    from coracle.tools._registrations import register_default_tools
 
     # Other test modules (notably tests/tools/test_mcp_client.py) call
     # ``default_registry.clear()`` and rely on import-time side effects to
@@ -220,7 +220,7 @@ def test_phase4_tools_registered_on_default_registry() -> None:
 
 
 def test_default_registry_openai_spec_matches_openai_shape() -> None:
-    from orchestrator.tools._registrations import register_default_tools
+    from coracle.tools._registrations import register_default_tools
 
     register_default_tools()
     spec = default_registry.openai_tools_spec()
@@ -238,7 +238,7 @@ def test_default_registry_openai_spec_matches_openai_shape() -> None:
 
 
 def test_register_default_tools_idempotent() -> None:
-    from orchestrator.tools._registrations import register_default_tools
+    from coracle.tools._registrations import register_default_tools
 
     register_default_tools()
     before = set(default_registry.names())
@@ -292,7 +292,7 @@ class _StubBrowser:
 
 
 def _install_stub_browser(monkeypatch: pytest.MonkeyPatch) -> _StubBrowser:
-    from orchestrator.tools import _registrations
+    from coracle.tools import _registrations
 
     stub = _StubBrowser()
     monkeypatch.setattr(_registrations, "_browser_singleton", stub, raising=True)
@@ -336,8 +336,8 @@ def test_browser_fill_wrapper(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_get_browser_lazy_instantiates(monkeypatch: pytest.MonkeyPatch) -> None:
-    from orchestrator.tools import _registrations
-    from orchestrator.tools import browser as browser_mod
+    from coracle.tools import _registrations
+    from coracle.tools import browser as browser_mod
 
     monkeypatch.setattr(_registrations, "_browser_singleton", None, raising=True)
     instances: list[object] = []

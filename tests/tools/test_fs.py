@@ -1,4 +1,4 @@
-"""Tests for orchestrator.tools.fs."""
+"""Tests for coracle.tools.fs."""
 
 from __future__ import annotations
 
@@ -8,9 +8,9 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator.config.settings import Settings
-from orchestrator.tools import fs
-from orchestrator.tools._sandbox import WorkspaceEscapeError
+from coracle.config.settings import Settings
+from coracle.tools import fs
+from coracle.tools._sandbox import WorkspaceEscapeError
 
 
 def _settings(root: Path) -> Settings:

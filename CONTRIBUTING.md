@@ -1,4 +1,4 @@
-# Contributing to `orchestrator`
+# Contributing to `coracle`
 
 Welcome — this project is **agent-friendly**. Every issue is written so that
 humans *and* coding agents (Claude Code, Copilot CLI, opencode, codex, Cursor,
@@ -10,7 +10,7 @@ wins; please open an issue to reconcile.
 
 ## Project overview
 
-`orchestrator` is a personal-machine AI orchestrator that splits work between
+`coracle` is a personal-machine AI coracle that splits work between
 free-tier "big" cloud models (planning) and local Ollama models
 (reasoning + execution) without spiking RAM. See [`README.md`](README.md) for
 the high-level pitch and [`docs/PLAN.md`](docs/PLAN.md) for the full design.
@@ -24,8 +24,8 @@ contact listed there.
 ## Quick start
 
 ```bash
-git clone https://github.com/skgandikota/orchestrator.git
-cd orchestrator
+git clone https://github.com/skgandikota/coracle.git
+cd coracle
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
 make test
@@ -142,7 +142,7 @@ Verify:
 
 ```bash
 git log --show-signature -1
-gh api /repos/skgandikota/orchestrator/commits/<sha> --jq '.commit.verification'
+gh api /repos/skgandikota/coracle/commits/<sha> --jq '.commit.verification'
 # expect: verified=true, reason=valid
 ```
 
@@ -164,7 +164,7 @@ GitHub Apps (bots) sign automatically with GitHub's web-flow signature.
 
 PRs that only touch documentation, configuration, GitHub metadata, or other
 non-code surfaces may apply the **`bot-review-bypass`** label to skip the
-heavier AI review stack. Code changes (anything under `orchestrator/` or
+heavier AI review stack. Code changes (anything under `coracle/` or
 `tests/`) **must not** use this bypass.
 
 ## Review process
@@ -195,7 +195,7 @@ make cov         # pytest with coverage gate
 ```
 
 **Coverage gate: 95%.** CI runs
-`pytest --cov=orchestrator --cov-fail-under=95`. PRs that drop coverage below
+`pytest --cov=coracle --cov-fail-under=95`. PRs that drop coverage below
 95% fail. Use `# pragma: no cover` only for genuinely-untestable branches
 (real subprocess fork paths, platform-specific stubs, etc.).
 
@@ -217,7 +217,7 @@ These are non-negotiable for any change:
 4. All long-running work is a job with an ID. APIs return job_id immediately; clients stream/poll.
 5. Provider fallback is automatic — no caller hardcodes a provider.
 6. Browser drivers are separate subprocesses — never in-process with the main app.
-7. One external model name: orchestrator. The classifier picks the pipeline, not the user.
+7. One external model name: coracle. The classifier picks the pipeline, not the user.
 8. Honor the RAM cap. psutil-based watchdog must be respected by every subprocess.
 ```
 

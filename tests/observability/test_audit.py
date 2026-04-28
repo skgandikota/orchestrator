@@ -1,4 +1,4 @@
-"""Tests for ``orchestrator.observability``."""
+"""Tests for ``coracle.observability``."""
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator import observability
-from orchestrator.observability import (
+from coracle import observability
+from coracle.observability import (
     MAX_PAYLOAD_BYTES,
     AuditEvent,
     AuditLog,
@@ -25,8 +25,8 @@ from orchestrator.observability import (
     record,
     reset_default_log,
 )
-from orchestrator.observability import audit as audit_mod
-from orchestrator.observability import otel as otel_mod
+from coracle.observability import audit as audit_mod
+from coracle.observability import otel as otel_mod
 
 
 @pytest.fixture()

@@ -1,4 +1,4 @@
-from orchestrator.guardrails import pii
+from coracle.guardrails import pii
 
 
 def test_scan_detects_email_phone_ssn():

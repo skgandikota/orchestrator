@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from coracle.prompts import _loader
 from evals import (
     ClassificationScorer,
     EvalCase,
@@ -26,7 +27,6 @@ from evals import (
     harness,
     load_suite,
 )
-from orchestrator.prompts import _loader
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SUITES_DIR = REPO_ROOT / "evals" / "suites"

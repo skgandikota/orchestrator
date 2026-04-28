@@ -37,7 +37,7 @@ make cov
 - [ ] Every commit is **signed off** (`git commit -s`, DCO trailer present)
 - [ ] Every commit is **GPG- or SSH-signed** (`verified=true` on GitHub)
 - [ ] `ruff check .` and `ruff format --check .` are clean
-- [ ] `pytest --cov=orchestrator --cov-fail-under=95` passes locally — **coverage ≥95%**
+- [ ] `pytest --cov=coracle --cov-fail-under=95` passes locally — **coverage ≥95%**
 - [ ] Tests added/updated for new behavior
 - [ ] Type hints on public surfaces
 - [ ] No secrets committed (keys, tokens, `.env` files, fixtures with real creds)

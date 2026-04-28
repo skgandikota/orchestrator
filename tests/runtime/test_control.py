@@ -1,4 +1,4 @@
-"""Tests for ``orchestrator.runtime.control``."""
+"""Tests for ``coracle.runtime.control``."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import asyncio
 
 import pytest
 
-from orchestrator.runtime.control import (
+from coracle.runtime.control import (
     CancelledControl,
     ControlFlag,
     ControlState,

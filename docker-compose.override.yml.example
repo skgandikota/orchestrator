@@ -6,8 +6,8 @@
 
 services:
 
-  # --- bind a different host port for the orchestrator -------------------
-  # orchestrator:
+  # --- bind a different host port for the coracle -------------------
+  # coracle:
   #   ports:
   #     - "18000:8000"
 
@@ -29,8 +29,8 @@ services:
   #             capabilities: ["gpu"]
 
   # --- mount a host-side Playwright cache for the browser variant -------
-  # Useful when the orchestrator image is built from `Dockerfile.browser`
+  # Useful when the coracle image is built from `Dockerfile.browser`
   # and you want to reuse a Chromium download already on disk.
-  # orchestrator:
+  # coracle:
   #   volumes:
-  #     - ${HOME}/.cache/ms-playwright:/home/orchestrator/.cache/ms-playwright
+  #     - ${HOME}/.cache/ms-playwright:/home/coracle/.cache/ms-playwright

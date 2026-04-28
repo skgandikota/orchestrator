@@ -7,13 +7,13 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
-from orchestrator.api import create_app
-from orchestrator.api import embeddings as embeddings_module
-from orchestrator.api.embeddings import (
+from coracle.api import create_app
+from coracle.api import embeddings as embeddings_module
+from coracle.api.embeddings import (
     EMBEDDING_MODEL_IDS,
     set_embeddings_backend,
 )
-from orchestrator.providers.fallback import AllProvidersFailed, QuotaExceeded
+from coracle.providers.fallback import AllProvidersFailed, QuotaExceeded
 
 
 class FakeBackend:
@@ -74,12 +74,12 @@ def client(fake_backend: FakeBackend) -> TestClient:
 def test_embeddings_string_input(client: TestClient, fake_backend: FakeBackend) -> None:
     resp = client.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": "hello world"},
+        json={"model": "coracle-embed", "input": "hello world"},
     )
     assert resp.status_code == 200
     body = resp.json()
     assert body["object"] == "list"
-    assert body["model"] == "orchestrator-embed"
+    assert body["model"] == "coracle-embed"
     assert len(body["data"]) == 1
     item = body["data"][0]
     assert item["object"] == "embedding"
@@ -95,7 +95,7 @@ def test_embeddings_list_of_strings_with_dimensions(
     resp = client.post(
         "/v1/embeddings",
         json={
-            "model": "orchestrator-embed-small",
+            "model": "coracle-embed-small",
             "input": ["a", "bb", "ccc"],
             "dimensions": 2,
             "encoding_format": "float",
@@ -116,7 +116,7 @@ def test_embeddings_list_of_strings_with_dimensions(
 def test_embeddings_token_array(client: TestClient, fake_backend: FakeBackend) -> None:
     resp = client.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": [1, 2, 3]},
+        json={"model": "coracle-embed", "input": [1, 2, 3]},
     )
     assert resp.status_code == 200
     assert fake_backend.calls[0]["inputs"] == ["1 2 3"]
@@ -125,7 +125,7 @@ def test_embeddings_token_array(client: TestClient, fake_backend: FakeBackend) -
 def test_embeddings_token_batch(client: TestClient, fake_backend: FakeBackend) -> None:
     resp = client.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": [[1, 2], [3, 4, 5]]},
+        json={"model": "coracle-embed", "input": [[1, 2], [3, 4, 5]]},
     )
     assert resp.status_code == 200
     assert fake_backend.calls[0]["inputs"] == ["1 2", "3 4 5"]
@@ -147,7 +147,7 @@ def test_embeddings_unknown_model_returns_404(client: TestClient) -> None:
 def test_embeddings_empty_input_list_returns_400(client: TestClient) -> None:
     resp = client.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": []},
+        json={"model": "coracle-embed", "input": []},
     )
     assert resp.status_code == 400
     assert "must not be empty" in resp.json()["detail"]
@@ -156,7 +156,7 @@ def test_embeddings_empty_input_list_returns_400(client: TestClient) -> None:
 def test_embeddings_invalid_input_type_returns_400(client: TestClient) -> None:
     resp = client.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": [1.5, 2.5]},
+        json={"model": "coracle-embed", "input": [1.5, 2.5]},
     )
     # pydantic rejects float-only list before our coercer; either 400 or 422.
     assert resp.status_code in (400, 422)
@@ -165,7 +165,7 @@ def test_embeddings_invalid_input_type_returns_400(client: TestClient) -> None:
 def test_embeddings_mixed_input_list_returns_400(client: TestClient) -> None:
     resp = client.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": [[1, 2], []]},
+        json={"model": "coracle-embed", "input": [[1, 2], []]},
     )
     assert resp.status_code == 400
 
@@ -176,7 +176,7 @@ def test_embeddings_provider_exhaustion_returns_429() -> None:
         c = TestClient(create_app())
         resp = c.post(
             "/v1/embeddings",
-            json={"model": "orchestrator-embed", "input": "x"},
+            json={"model": "coracle-embed", "input": "x"},
         )
         assert resp.status_code == 429
         assert "exhausted" in resp.json()["detail"]
@@ -190,7 +190,7 @@ def test_embeddings_wrong_vector_count_returns_502() -> None:
         c = TestClient(create_app())
         resp = c.post(
             "/v1/embeddings",
-            json={"model": "orchestrator-embed", "input": "x"},
+            json={"model": "coracle-embed", "input": "x"},
         )
         assert resp.status_code == 502
     finally:
@@ -206,7 +206,7 @@ def test_default_stub_backend_returns_zero_vectors() -> None:
     c = TestClient(create_app())
     resp = c.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": ["hi", "there"], "dimensions": 3},
+        json={"model": "coracle-embed", "input": ["hi", "there"], "dimensions": 3},
     )
     assert resp.status_code == 200
     body = resp.json()
@@ -219,32 +219,32 @@ def test_default_stub_backend_uses_default_dim() -> None:
     c = TestClient(create_app())
     resp = c.post(
         "/v1/embeddings",
-        json={"model": "orchestrator-embed", "input": "hi"},
+        json={"model": "coracle-embed", "input": "hi"},
     )
     assert resp.status_code == 200
     assert len(resp.json()["data"][0]["embedding"]) == 8
 
 
 def test_known_embedding_model_ids_are_disjoint_from_chat() -> None:
-    from orchestrator.api.openai_compat import MODEL_IDS as CHAT_IDS
+    from coracle.api.openai_compat import MODEL_IDS as CHAT_IDS
 
     assert set(EMBEDDING_MODEL_IDS).isdisjoint(set(CHAT_IDS))
 
 
 def test_auth_required_when_token_set(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ORCHESTRATOR_API_TOKEN", "secret")
+    monkeypatch.setenv("CORACLE_API_TOKEN", "secret")
     set_embeddings_backend(FakeBackend())
     try:
         c = TestClient(create_app())
         resp = c.post(
             "/v1/embeddings",
-            json={"model": "orchestrator-embed", "input": "x"},
+            json={"model": "coracle-embed", "input": "x"},
         )
         assert resp.status_code == 401
 
         resp_ok = c.post(
             "/v1/embeddings",
-            json={"model": "orchestrator-embed", "input": "x"},
+            json={"model": "coracle-embed", "input": "x"},
             headers={"Authorization": "Bearer secret"},
         )
         assert resp_ok.status_code == 200

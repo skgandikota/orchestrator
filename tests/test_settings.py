@@ -1,4 +1,4 @@
-"""Tests for orchestrator.config.settings."""
+"""Tests for coracle.config.settings."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator.config.settings import (
+from coracle.config.settings import (
     DEFAULT_SETTINGS_PATH,
     Settings,
     SettingsError,
@@ -17,7 +17,7 @@ from orchestrator.config.settings import (
 
 def _strip_env(monkeypatch: pytest.MonkeyPatch) -> None:
     for k in list(os.environ):
-        if k.startswith("ORCHESTRATOR__"):
+        if k.startswith("CORACLE__"):
             monkeypatch.delenv(k, raising=False)
 
 
@@ -37,10 +37,10 @@ def test_defaults_load(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_env_var_override(monkeypatch: pytest.MonkeyPatch) -> None:
     _strip_env(monkeypatch)
-    monkeypatch.setenv("ORCHESTRATOR__RAM__SOFT_CAP_MB", "9000")
-    monkeypatch.setenv("ORCHESTRATOR__RAM__HARD_CAP_MB", "4096")
-    monkeypatch.setenv("ORCHESTRATOR__LOGGING__JSON", "true")
-    monkeypatch.setenv("ORCHESTRATOR__OLLAMA__BASE_URL", "http://example.invalid:9999")
+    monkeypatch.setenv("CORACLE__RAM__SOFT_CAP_MB", "9000")
+    monkeypatch.setenv("CORACLE__RAM__HARD_CAP_MB", "4096")
+    monkeypatch.setenv("CORACLE__LOGGING__JSON", "true")
+    monkeypatch.setenv("CORACLE__OLLAMA__BASE_URL", "http://example.invalid:9999")
 
     s = load_settings()
     assert s.ram.soft_cap_mb == 9000
@@ -97,8 +97,8 @@ def test_env_override_skips_empty_segment(tmp_path: Path, monkeypatch: pytest.Mo
     _strip_env(monkeypatch)
     cfg = tmp_path / "ok.toml"
     cfg.write_text("[ram]\nsoft_cap_mb = 4096\n", encoding="utf-8")
-    # ORCHESTRATOR____KEY -> path == ["", "KEY"] -> any empty -> continue
-    monkeypatch.setenv("ORCHESTRATOR____STRAY", "ignored")
+    # CORACLE____KEY -> path == ["", "KEY"] -> any empty -> continue
+    monkeypatch.setenv("CORACLE____STRAY", "ignored")
     s = load_settings(cfg)
     assert s.ram.soft_cap_mb == 4096
 
@@ -114,6 +114,6 @@ def test_env_override_replaces_non_dict_intermediate(
         '[tools]\nweb = "scalar-not-a-dict"\n',
         encoding="utf-8",
     )
-    monkeypatch.setenv("ORCHESTRATOR__TOOLS__WEB__USER_AGENT", "ua-from-env/1.0")
+    monkeypatch.setenv("CORACLE__TOOLS__WEB__USER_AGENT", "ua-from-env/1.0")
     s = load_settings(cfg)
     assert s.tools.web.user_agent == "ua-from-env/1.0"

@@ -1,4 +1,4 @@
-# Compose stack for the orchestrator + a local Ollama backend.
+# Compose stack for the coracle + a local Ollama backend.
 #
 # Default usage (cold start, assumes models already pulled):
 #   docker compose up -d
@@ -12,15 +12,15 @@
 #   docker compose -f compose.yaml -f compose.browser.yaml up -d
 #
 # `docker compose down` preserves named volumes; `docker compose down -v`
-# removes them (i.e. wipes the local model cache and orchestrator data).
+# removes them (i.e. wipes the local model cache and coracle data).
 
-name: orchestrator
+name: coracle
 
 # --- inference backend --------------------------------------------------
 services:
   ollama:
     image: ollama/ollama:latest
-    # Internal-only by default — the orchestrator service reaches it over
+    # Internal-only by default — the coracle service reaches it over
     # the compose network at `http://ollama:11434`. To expose Ollama on
     # the host, copy `docker-compose.override.yml.example` and uncomment
     # the `ports:` block there.
@@ -40,13 +40,13 @@ services:
       retries: 12
       start_period: 30s
 
-  # --- orchestrator -----------------------------------------------------
-  orchestrator:
+  # --- coracle -----------------------------------------------------
+  coracle:
     build:
       context: .
       dockerfile: Dockerfile
       target: runtime
-    image: orchestrator:slim
+    image: coracle:slim
     depends_on:
       ollama:
         condition: service_healthy
@@ -60,8 +60,8 @@ services:
     ports:
       - "${ORCH_HOST_PORT:-8000}:8000"
     volumes:
-      - ./config:/etc/orchestrator:ro
-      - orch-data:/var/lib/orchestrator
+      - ./config:/etc/coracle:ro
+      - orch-data:/var/lib/coracle
     restart: unless-stopped
 
   # --- one-shot init: pull models, then exit ----------------------------
@@ -92,6 +92,6 @@ services:
 
 volumes:
   # Project-prefixed (compose adds the `name:` above) so multiple checkouts
-  # don't collide: `orchestrator_ollama-models`, `orchestrator_orch-data`.
+  # don't collide: `coracle_ollama-models`, `coracle_orch-data`.
   ollama-models:
   orch-data:

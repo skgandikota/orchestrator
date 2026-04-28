@@ -36,8 +36,8 @@ body:
       label: Files / paths to touch
       description: Best guess at where the change should land. Update if you discover otherwise.
       placeholder: |
-        - `orchestrator/core/ram_monitor.py` (new)
-        - `orchestrator/config/settings.toml` (add keys)
+        - `coracle/core/ram_monitor.py` (new)
+        - `coracle/config/settings.toml` (add keys)
         - `tests/core/test_ram_monitor.py` (new)
     validations:
       required: true

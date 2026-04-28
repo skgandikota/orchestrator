@@ -1,4 +1,4 @@
-"""Tests for orchestrator.tools.web."""
+"""Tests for coracle.tools.web."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ import httpx
 import pytest
 import respx
 
-from orchestrator.config.settings import Settings, ToolsSettings, WebToolSettings
-from orchestrator.tools import web
-from orchestrator.tools.web import (
+from coracle.config.settings import Settings, ToolsSettings, WebToolSettings
+from coracle.tools import web
+from coracle.tools.web import (
     FetchError,
     FetchResult,
     SearchError,

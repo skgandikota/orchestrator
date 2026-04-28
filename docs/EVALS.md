@@ -1,7 +1,7 @@
 # Prompt evaluation harness
 
 The eval harness lives under [`evals/`](../evals) and is intentionally
-decoupled from `orchestrator.models` / `orchestrator.providers` so that
+decoupled from `coracle.models` / `coracle.providers` so that
 suites can run against any callable model — a real local model, a hosted
 provider, or an in-process stub.
 
@@ -53,9 +53,9 @@ the default and use canned outputs from `FakeModelClient`.
 
 ## Bumping a prompt version
 
-Every file in `orchestrator/prompts/` carries a `# version: N` header
+Every file in `coracle/prompts/` carries a `# version: N` header
 (integer, monotonically increasing). The loader in
-`orchestrator/prompts/_loader.py` parses that header and exposes
+`coracle/prompts/_loader.py` parses that header and exposes
 `prompt.version`. To bump:
 
 1. Edit the prompt file.

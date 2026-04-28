@@ -1,4 +1,4 @@
-"""Tests for ``orchestrator.tools.git``.
+"""Tests for ``coracle.tools.git``.
 
 Each test creates a fresh temp git repo with an isolated local config so
 the user's real repos and global git config are never touched.
@@ -11,8 +11,8 @@ from pathlib import Path
 
 import pytest
 
-from orchestrator.tools import git as git_tool
-from orchestrator.tools.git import GitError
+from coracle.tools import git as git_tool
+from coracle.tools.git import GitError
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -183,7 +183,7 @@ def test_checkout_create_validates_branch_name(repo: Path) -> None:
 
 def test_settings_and_workspace_root_helpers(monkeypatch: pytest.MonkeyPatch) -> None:
     """Cover ``_settings`` / ``_workspace_root`` (default code path)."""
-    from orchestrator.config.settings import FsToolSettings, Settings, ToolsSettings
+    from coracle.config.settings import FsToolSettings, Settings, ToolsSettings
 
     fake = Settings(tools=ToolsSettings(fs=FsToolSettings(workspace_root="/tmp/ws-x")))
     monkeypatch.setattr(git_tool, "load_settings", lambda: fake)

@@ -50,7 +50,7 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
-# Local data the orchestrator may write (model files, logs, SQLite, scratch)
+# Local data the coracle may write (model files, logs, SQLite, scratch)
 .tmp-issues
 *.sqlite
 *.sqlite-journal

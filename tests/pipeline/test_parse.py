@@ -1,4 +1,4 @@
-"""Tests for :mod:`orchestrator.pipeline.parse`."""
+"""Tests for :mod:`coracle.pipeline.parse`."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from orchestrator.pipeline import (
+from coracle.pipeline import (
     ActionItem,
     ActionType,
     ParsedActions,
@@ -15,7 +15,7 @@ from orchestrator.pipeline import (
     load_repair_prompt,
     parse_model_output,
 )
-from orchestrator.pipeline import parse as parse_module
+from coracle.pipeline import parse as parse_module
 
 
 class FakeModel:
@@ -208,7 +208,7 @@ def test_invalid_actions_are_dropped_not_raised(caplog: pytest.LogCaptureFixture
             ]
         }
     )
-    with caplog.at_level("WARNING", logger="orchestrator.pipeline.parse"):
+    with caplog.at_level("WARNING", logger="coracle.pipeline.parse"):
         result = parse_model_output(raw)
     assert [a.type for a in result.actions] == [ActionType.MESSAGE_TO_USER]
     messages = " ".join(rec.message for rec in caplog.records)

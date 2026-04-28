@@ -1,6 +1,6 @@
-# Gitleaks configuration for orchestrator.
+# Gitleaks configuration for coracle.
 # Extends the upstream default ruleset; only adds project-specific allowlists.
-title = "orchestrator gitleaks config"
+title = "coracle gitleaks config"
 
 [extend]
 useDefault = true

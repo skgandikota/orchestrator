@@ -1,7 +1,7 @@
 # Releases
 
 This document describes how to cut a release and verify the published container
-images for `orchestrator`.
+images for `coracle`.
 
 ## Container images
 
@@ -10,8 +10,8 @@ the [`release-image`](../.github/workflows/release-image.yml) workflow:
 
 | Image | Contents |
 |-------|----------|
-| `ghcr.io/skgandikota/orchestrator` | Slim runtime (no browser deps) — built from `Dockerfile`. |
-| `ghcr.io/skgandikota/orchestrator-browser` | Slim runtime + Playwright/Chromium — built from `Dockerfile.browser`. |
+| `ghcr.io/skgandikota/coracle` | Slim runtime (no browser deps) — built from `Dockerfile`. |
+| `ghcr.io/skgandikota/coracle-browser` | Slim runtime + Playwright/Chromium — built from `Dockerfile.browser`. |
 
 ### Tag scheme
 
@@ -49,8 +49,8 @@ The workflow uses `docker/metadata-action@v5`, `docker/setup-buildx-action@v3`,
 
 5. **Flip package visibility to public (one-time, per image)** — after the
    first successful publish, on github.com:
-   `Your profile → Packages → orchestrator → Package settings → Change
-   visibility → Public`. Repeat for `orchestrator-browser`. Documented in
+   `Your profile → Packages → coracle → Package settings → Change
+   visibility → Public`. Repeat for `coracle-browser`. Documented in
    [`docs/DEPLOY.md`](DEPLOY.md).
 
 6. **Publish a GitHub Release** referencing the tag. Auto-generated release
@@ -63,19 +63,19 @@ After the workflow finishes, anyone can pull the image without authenticating
 
 ```bash
 # Edge — built on every push to main
-docker pull ghcr.io/skgandikota/orchestrator:edge
+docker pull ghcr.io/skgandikota/coracle:edge
 
 # Latest tagged release
-docker pull ghcr.io/skgandikota/orchestrator:latest
+docker pull ghcr.io/skgandikota/coracle:latest
 
 # Specific version
-docker pull ghcr.io/skgandikota/orchestrator:v0.1.0
+docker pull ghcr.io/skgandikota/coracle:v0.1.0
 ```
 
 Confirm the manifest is multi-arch:
 
 ```bash
-docker buildx imagetools inspect ghcr.io/skgandikota/orchestrator:edge
+docker buildx imagetools inspect ghcr.io/skgandikota/coracle:edge
 # Expect to see entries for both linux/amd64 and linux/arm64.
 ```
 
@@ -83,17 +83,17 @@ Smoke-test the container:
 
 ```bash
 docker run --rm --entrypoint python \
-  ghcr.io/skgandikota/orchestrator:edge \
-  -c "import orchestrator; print('ok')"
+  ghcr.io/skgandikota/coracle:edge \
+  -c "import coracle; print('ok')"
 ```
 
 Run the HTTP API locally (the image's default `CMD`):
 
 ```bash
 docker run --rm -p 8000:8000 \
-  -v "$HOME/.config/orchestrator:/etc/orchestrator" \
-  -v "$HOME/.local/share/orchestrator:/var/lib/orchestrator" \
-  ghcr.io/skgandikota/orchestrator:edge
+  -v "$HOME/.config/coracle:/etc/coracle" \
+  -v "$HOME/.local/share/coracle:/var/lib/coracle" \
+  ghcr.io/skgandikota/coracle:edge
 # Then:
 curl http://localhost:8000/v1/models
 ```

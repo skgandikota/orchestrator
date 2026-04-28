@@ -10,18 +10,18 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from orchestrator.api import create_app, openai_compat
-from orchestrator.api._mcp_attach import (
+from coracle.api import create_app, openai_compat
+from coracle.api._mcp_attach import (
     MCPServerRequest,
     attach_mcp_tools,
     set_session_factory,
 )
-from orchestrator.api.openai_compat import (
+from coracle.api.openai_compat import (
     Message,
     PipelineEvent,
     set_backend,
 )
-from orchestrator.tools.mcp_client import ServerSpec
+from coracle.tools.mcp_client import ServerSpec
 
 # ---------------------------------------------------------------------------
 # MCP test doubles
@@ -250,7 +250,7 @@ async def test_attached_aclose_is_idempotent() -> None:
 
 
 def test_set_session_factory_falls_back_to_default() -> None:
-    from orchestrator.api import _mcp_attach
+    from coracle.api import _mcp_attach
 
     set_session_factory(None)
     assert _mcp_attach._SESSION_FACTORY is _mcp_attach.default_session_factory
@@ -311,7 +311,7 @@ def test_chat_completions_attaches_mcp_tools(
     resp = client.post(
         "/v1/chat/completions",
         json={
-            "model": "orchestrator",
+            "model": "coracle",
             "messages": [{"role": "user", "content": "hi"}],
             "mcp_servers": [{"name": "orc", "url": "http://localhost:9", "transport": "http"}],
         },
@@ -330,7 +330,7 @@ def test_chat_completions_without_mcp_omits_block(
     resp = client.post(
         "/v1/chat/completions",
         json={
-            "model": "orchestrator",
+            "model": "coracle",
             "messages": [{"role": "user", "content": "hi"}],
         },
     )
@@ -348,7 +348,7 @@ def test_chat_completions_reports_unreachable_server(
     resp = client.post(
         "/v1/chat/completions",
         json={
-            "model": "orchestrator",
+            "model": "coracle",
             "messages": [{"role": "user", "content": "hi"}],
             "mcp_servers": [
                 {"name": "good", "url": "http://g", "transport": "http"},
@@ -371,7 +371,7 @@ def test_chat_completions_stream_emits_mcp_chunk(
         "POST",
         "/v1/chat/completions",
         json={
-            "model": "orchestrator",
+            "model": "coracle",
             "messages": [{"role": "user", "content": "hi"}],
             "stream": True,
             "mcp_servers": [{"name": "orc", "url": "http://localhost:9", "transport": "http"}],

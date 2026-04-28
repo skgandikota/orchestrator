@@ -8,20 +8,20 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from orchestrator.api.app import create_app
-from orchestrator.api.tasks import (
+from coracle.api.app import create_app
+from coracle.api.tasks import (
     Job as ApiJob,
 )
-from orchestrator.api.tasks import (
+from coracle.api.tasks import (
     JobManager,
     JobStatus,
     PipelineEvent,
     set_job_manager,
 )
-from orchestrator.config.settings import Settings, StatusSettings
-from orchestrator.models.narrator import Narrator, build_prompt
-from orchestrator.runtime.status import RamReading
-from orchestrator.runtime.status_b import status_b
+from coracle.config.settings import Settings, StatusSettings
+from coracle.models.narrator import Narrator, build_prompt
+from coracle.runtime.status import RamReading
+from coracle.runtime.status_b import status_b
 
 # ---------------------------------------------------------------------------
 # Helpers

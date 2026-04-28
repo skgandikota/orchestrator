@@ -1,5 +1,5 @@
-from orchestrator.guardrails import build_default_pipeline
-from orchestrator.guardrails.pipeline import GuardrailPipeline
+from coracle.guardrails import build_default_pipeline
+from coracle.guardrails.pipeline import GuardrailPipeline
 
 
 def test_check_input_clean_passes():

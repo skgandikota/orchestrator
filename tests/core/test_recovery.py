@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from orchestrator.core.recovery import (
+from coracle.core.recovery import (
     IN_FLIGHT_STATUSES,
     Job,
     RecoveryEvent,

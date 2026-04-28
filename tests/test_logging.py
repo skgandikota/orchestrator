@@ -1,4 +1,4 @@
-"""Tests for orchestrator.core.logging."""
+"""Tests for coracle.core.logging."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import json
 import pytest
 import structlog
 
-from orchestrator.core.logging import (
+from coracle.core.logging import (
     configure_logging,
     is_configured,
     reset_for_testing,

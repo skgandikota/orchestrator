@@ -1,7 +1,7 @@
-# Example MCP server configuration consumed by orchestrator.tools.mcp_client.
+# Example MCP server configuration consumed by coracle.tools.mcp_client.
 #
 # Copy this file to config/mcp_servers.yaml (gitignored) and edit the
-# entries to match the MCP servers you want the orchestrator to surface
+# entries to match the MCP servers you want the coracle to surface
 # as local tools. Environment variables are expanded with ${VAR} syntax.
 servers:
   - name: github

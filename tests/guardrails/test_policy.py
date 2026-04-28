@@ -1,4 +1,4 @@
-from orchestrator.guardrails import policy
+from coracle.guardrails import policy
 
 
 def test_evaluate_detects_rm_rf_root():

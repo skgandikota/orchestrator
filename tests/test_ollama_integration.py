@@ -19,8 +19,8 @@ from typing import Any
 import httpx
 import pytest
 
-from orchestrator.config.settings import load_settings
-from orchestrator.models.ollama_local import OllamaLocalAdapter
+from coracle.config.settings import load_settings
+from coracle.models.ollama_local import OllamaLocalAdapter
 
 
 def _mocked_daemon_handler() -> tuple[Any, dict[str, Any]]:

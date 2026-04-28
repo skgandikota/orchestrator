@@ -10,9 +10,9 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from orchestrator.api import app as app_module
-from orchestrator.api import tasks as tasks_module
-from orchestrator.api.tasks import (
+from coracle.api import app as app_module
+from coracle.api import tasks as tasks_module
+from coracle.api.tasks import (
     Job,
     JobManager,
     JobStatus,

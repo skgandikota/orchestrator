@@ -1,4 +1,4 @@
-"""Unit tests for :mod:`orchestrator.models.ollama_local`.
+"""Unit tests for :mod:`coracle.models.ollama_local`.
 
 All HTTP traffic goes through an :class:`httpx.MockTransport` so no real
 Ollama daemon is required.
@@ -13,8 +13,8 @@ from typing import Any
 import httpx
 import pytest
 
-from orchestrator.core.scheduler import LlmSlotScheduler
-from orchestrator.models.ollama_local import (
+from coracle.core.scheduler import LlmSlotScheduler
+from coracle.models.ollama_local import (
     OllamaError,
     OllamaLocalAdapter,
     OllamaTimeout,

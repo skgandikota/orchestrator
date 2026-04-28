@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 
-from orchestrator.pipeline import (
+from coracle.pipeline import (
     CoderClient,
     ExecutableStep,
     ExecuteError,
@@ -19,7 +19,7 @@ from orchestrator.pipeline import (
     ToolRegistry,
     execute,
 )
-from orchestrator.pipeline.execute import (
+from coracle.pipeline.execute import (
     CODER_MODEL_ID,
     DEFAULT_MAX_ITERATIONS,
     _coerce_args,

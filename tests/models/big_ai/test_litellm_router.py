@@ -1,4 +1,4 @@
-"""Unit tests for :mod:`orchestrator.models.big_ai.litellm_router`.
+"""Unit tests for :mod:`coracle.models.big_ai.litellm_router`.
 
 Tests use either litellm's ``mock_response=`` argument or ``monkeypatch`` of
 ``litellm.completion`` so that no real network calls are made.
@@ -14,7 +14,7 @@ import litellm
 import pytest
 from litellm.exceptions import APIConnectionError, APIError, RateLimitError, Timeout
 
-from orchestrator.models.big_ai import (
+from coracle.models.big_ai import (
     BigAIError,
     LitellmRouter,
     Provider,
@@ -24,7 +24,7 @@ from orchestrator.models.big_ai import (
     QuotaTracker,
     UnknownProvider,
 )
-from orchestrator.models.big_ai.litellm_router import _resolve_settings_path
+from coracle.models.big_ai.litellm_router import _resolve_settings_path
 
 SAMPLE_SETTINGS = """\
 [providers]
@@ -152,9 +152,9 @@ def test_provider_without_default_model_raises(tmp_path: Path) -> None:
 
 def test_resolve_settings_path_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     target = tmp_path / "x.toml"
-    monkeypatch.setenv("ORCHESTRATOR_SETTINGS", str(target))
+    monkeypatch.setenv("CORACLE_SETTINGS", str(target))
     assert _resolve_settings_path(None) == target
-    monkeypatch.delenv("ORCHESTRATOR_SETTINGS", raising=False)
+    monkeypatch.delenv("CORACLE_SETTINGS", raising=False)
     # no env, default path resolves under the package
     p = _resolve_settings_path(None)
     assert p.name == "settings.toml"

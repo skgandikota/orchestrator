@@ -1,8 +1,8 @@
-"""Prompt evaluation harness for the orchestrator project.
+"""Prompt evaluation harness for the coracle project.
 
 This package provides a model-agnostic harness for measuring prompt
-quality. It is intentionally decoupled from ``orchestrator.models`` and
-``orchestrator.providers`` so that suites can run against any callable
+quality. It is intentionally decoupled from ``coracle.models`` and
+``coracle.providers`` so that suites can run against any callable
 or :class:`ModelClient` implementation (real or stubbed).
 """
 

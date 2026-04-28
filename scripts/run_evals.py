@@ -43,7 +43,7 @@ def _timestamp() -> str:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Run orchestrator eval suites.")
+    parser = argparse.ArgumentParser(description="Run coracle eval suites.")
     parser.add_argument("suite", nargs="?", help="Suite name (e.g. classify)")
     parser.add_argument("--all", action="store_true", help="Run every suite")
     parser.add_argument(

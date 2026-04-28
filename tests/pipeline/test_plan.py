@@ -9,13 +9,13 @@ from typing import Any
 
 import pytest
 
-from orchestrator.pipeline import (
+from coracle.pipeline import (
     BigModelRouter,
     PlanError,
     RefinedPrompt,
     plan,
 )
-from orchestrator.pipeline.plan import Plan, PlanStep, _load_system_prompt
+from coracle.pipeline.plan import Plan, PlanStep, _load_system_prompt
 
 
 def _valid_plan_payload(*, ids: list[str] | None = None) -> dict[str, Any]:

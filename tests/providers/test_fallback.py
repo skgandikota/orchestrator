@@ -1,4 +1,4 @@
-"""Tests for :mod:`orchestrator.providers.fallback`."""
+"""Tests for :mod:`coracle.providers.fallback`."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from typing import Any
 
 import pytest
 
-from orchestrator.observability import audit
-from orchestrator.providers.fallback import (
+from coracle.observability import audit
+from coracle.providers.fallback import (
     AllProvidersFailed,
     AuthError,
     BrowserDriverCrashed,

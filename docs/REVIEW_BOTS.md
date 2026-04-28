@@ -60,5 +60,5 @@ Each bot supports a label or comment to skip review:
 ## Static analysis (separate stack)
 
 Static analysis tools (CodeQL, Semgrep, Trivy, Gitleaks, Dependabot) are
-tracked separately in issue [#49](https://github.com/skgandikota/orchestrator/issues/49)
+tracked separately in issue [#49](https://github.com/skgandikota/coracle/issues/49)
 and configured under [`.github/workflows/`](../.github/workflows/).

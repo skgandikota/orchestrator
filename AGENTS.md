@@ -2,7 +2,7 @@
 
 This file is the operating manual for autonomous AI coding agents (Claude
 Code, Copilot CLI, opencode, codex, Cursor, Continue, fleet runners, etc.)
-working on `skgandikota/orchestrator`. Humans should read
+working on `skgandikota/coracle`. Humans should read
 [`CONTRIBUTING.md`](CONTRIBUTING.md) instead — this page is the agent-only
 addendum.
 
@@ -39,7 +39,7 @@ Every PR you open must:
 - **Sign off every commit** with `git commit -s` (DCO). CI rejects missing
   `Signed-off-by:` trailers.
 - **GPG- or SSH-sign every commit.** `main` enforces `required_signatures`.
-- **Keep coverage ≥95%.** Run `pytest --cov=orchestrator --cov-fail-under=95`
+- **Keep coverage ≥95%.** Run `pytest --cov=coracle --cov-fail-under=95`
   before pushing. New code without tests fails CI.
 - **Run lint locally.** `ruff check .` and `ruff format --check .` must be
   clean.
@@ -96,7 +96,7 @@ Acceptance Criteria met."
 ```
 
 You are personally responsible for honoring the bypass: if your diff
-touches **any** file under `orchestrator/` or `tests/`, remove the label
+touches **any** file under `coracle/` or `tests/`, remove the label
 and let the bots review. Misuse is grounds for the strict reviewer to
 block-merge the PR.
 

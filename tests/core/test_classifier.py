@@ -9,7 +9,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from orchestrator.core.classifier import (
+from coracle.core.classifier import (
     ClassifyResult,
     OllamaClient,
     StateRecorder,
@@ -242,8 +242,8 @@ def test_protocols_are_importable() -> None:
 
 
 def test_classify_reexport_from_core() -> None:
-    from orchestrator.core import ClassifyResult as Re_Result
-    from orchestrator.core import classify as re_classify
+    from coracle.core import ClassifyResult as Re_Result
+    from coracle.core import classify as re_classify
 
     assert Re_Result is ClassifyResult
     assert re_classify is classify

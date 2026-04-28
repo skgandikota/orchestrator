@@ -28,7 +28,7 @@ jobs:
           app-id: ${{ secrets.SKGANDIKOTA_APPID }}
           private-key: ${{ secrets.SKGANDIKOTA_PRIVATEKEY }}
           owner: skgandikota
-          repositories: orchestrator
+          repositories: coracle
 
       - name: Request Copilot review (GraphQL)
         env:
@@ -49,7 +49,7 @@ jobs:
                   nodes { ... on Bot { login id } }
                 }
               }
-            }' -F owner=skgandikota -F name=orchestrator \
+            }' -F owner=skgandikota -F name=coracle \
                -F pr=${{ github.event.pull_request.number }} \
             --jq '..|select(type=="object" and .login? and (.login|test("[Cc]opilot"))) | .id' \
             | head -n1) || true

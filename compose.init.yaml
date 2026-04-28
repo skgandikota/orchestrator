@@ -7,7 +7,7 @@
 #   docker compose -f compose.yaml -f compose.init.yaml --profile init up ollama-init
 #
 # Customize the model set via the OLLAMA_MODELS env var (whitespace-
-# separated tags). Defaults below mirror the orchestrator's recommended
+# separated tags). Defaults below mirror the coracle's recommended
 # stack.
 
 services:

@@ -1,4 +1,4 @@
-"""Tests for orchestrator.tools.browser.
+"""Tests for coracle.tools.browser.
 
 The subprocess worker (and Playwright underneath) is replaced by an
 in-process fake transport so no real browser ever launches.
@@ -14,9 +14,9 @@ from unittest import mock
 
 import pytest
 
-from orchestrator.tools import _browser_worker
-from orchestrator.tools._url_guard import UrlGuardError, check_url
-from orchestrator.tools.browser import (
+from coracle.tools import _browser_worker
+from coracle.tools._url_guard import UrlGuardError, check_url
+from coracle.tools.browser import (
     BrowserTool,
     BrowserToolError,
     PageSnapshot,
@@ -563,7 +563,7 @@ def test_worker_main_uses_default_worker_and_streams(monkeypatch):
 # Subprocess transport (real subprocess, fake worker payload via -c)
 # ---------------------------------------------------------------------------
 def test_subprocess_transport_round_trip(tmp_path):
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     # Spawn a tiny Python program that echoes a canned reply.
     script = (
@@ -584,7 +584,7 @@ def test_subprocess_transport_round_trip(tmp_path):
 
 
 def test_subprocess_transport_send_after_close_raises():
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     tx = _SubprocessTransport(argv=[_sys.executable, "-c", "import sys; sys.exit(0)"])
     tx.close()
@@ -593,7 +593,7 @@ def test_subprocess_transport_send_after_close_raises():
 
 
 def test_subprocess_transport_recv_returns_none_after_exit():
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     tx = _SubprocessTransport(argv=[_sys.executable, "-c", "import sys; sys.exit(0)"])
     try:
@@ -606,7 +606,7 @@ def test_subprocess_transport_recv_returns_none_after_exit():
 
 
 def test_subprocess_transport_close_kills_hung_process(monkeypatch):
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     # Long-sleeping worker; close() must terminate it.
     busy_script = "import time\nwhile True: time.sleep(0.05)"
@@ -619,7 +619,7 @@ def test_subprocess_transport_close_kills_hung_process(monkeypatch):
 
 
 def test_browser_tool_default_factory_creates_subprocess_transport():
-    from orchestrator.tools.browser import BrowserTool, _SubprocessTransport
+    from coracle.tools.browser import BrowserTool, _SubprocessTransport
 
     captured: dict[str, object] = {}
 
@@ -771,7 +771,7 @@ def test_to_snapshot_passthrough_when_within_cap():
 
 
 def test_subprocess_transport_send_handles_broken_pipe():
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     tx = _SubprocessTransport(argv=[_sys.executable, "-c", "import sys; sys.exit(0)"])
     # Wait for the subprocess to fully exit so writes break.
@@ -783,7 +783,7 @@ def test_subprocess_transport_send_handles_broken_pipe():
 
 
 def test_subprocess_transport_recv_drains_buffered_after_exit():
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     script = (
         'import sys\nsys.stdout.write(\'{"id":1,"result":{"ok":true}}\\n\')\nsys.stdout.flush()\n'
@@ -800,7 +800,7 @@ def test_subprocess_transport_recv_drains_buffered_after_exit():
 
 
 def test_subprocess_transport_close_kill_path_on_terminate_timeout():
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     busy = "import time\nwhile True: time.sleep(0.05)"
     tx = _SubprocessTransport(argv=[_sys.executable, "-c", busy])
@@ -826,7 +826,7 @@ def test_subprocess_transport_close_kill_path_on_terminate_timeout():
 
 
 def test_subprocess_transport_close_is_idempotent():
-    from orchestrator.tools.browser import _SubprocessTransport
+    from coracle.tools.browser import _SubprocessTransport
 
     tx = _SubprocessTransport(argv=[_sys.executable, "-c", "import sys; sys.exit(0)"])
     tx.close()

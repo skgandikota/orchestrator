@@ -37,7 +37,7 @@ jobs:
 
       - name: Tests with coverage gate
         run: |
-          pytest --cov=orchestrator \
+          pytest --cov=coracle \
                  --cov-report=term-missing \
                  --cov-report=xml \
                  --cov-fail-under=95
@@ -68,7 +68,7 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Type-check
-        run: mypy orchestrator/
+        run: mypy coracle/
 
   build:
     name: build (sdist + wheel)

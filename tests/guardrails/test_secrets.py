@@ -1,4 +1,4 @@
-from orchestrator.guardrails import secrets
+from coracle.guardrails import secrets
 
 _AKIA = "AK" + "IA"
 _GHP = "ghp" + "_"

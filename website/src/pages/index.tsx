@@ -26,7 +26,7 @@ function HomepageHeader() {
           <Link
             className="button button--outline button--secondary button--lg"
             style={{marginLeft: '1rem'}}
-            to="https://github.com/skgandikota/orchestrator">
+            to="https://github.com/skgandikota/coracle">
             View on GitHub
           </Link>
         </div>
@@ -40,7 +40,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={siteConfig.title}
-      description="Personal-machine AI orchestrator: free big-AI + local Ollama, RAM-aware">
+      description="Personal-machine AI coracle: free big-AI + local Ollama, RAM-aware">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

@@ -3,9 +3,9 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Orchestrator',
+  title: 'Coracle',
   tagline:
-    'Personal-machine AI orchestrator: free big-AI + local Ollama, RAM-aware',
+    'Personal-machine AI coracle: free big-AI + local Ollama, RAM-aware',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -13,10 +13,10 @@ const config: Config = {
   },
 
   url: 'https://skgandikota.github.io',
-  baseUrl: '/orchestrator/',
+  baseUrl: '/coracle/',
 
   organizationName: 'skgandikota',
-  projectName: 'orchestrator',
+  projectName: 'coracle',
   trailingSlash: false,
 
   onBrokenLinks: 'warn',
@@ -38,7 +38,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl:
-            'https://github.com/skgandikota/orchestrator/tree/main/website/',
+            'https://github.com/skgandikota/coracle/tree/main/website/',
         },
         blog: false,
         theme: {
@@ -54,9 +54,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Orchestrator',
+      title: 'Coracle',
       logo: {
-        alt: 'Orchestrator Logo',
+        alt: 'Coracle Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -67,17 +67,17 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'https://github.com/skgandikota/orchestrator#readme',
+          href: 'https://github.com/skgandikota/coracle#readme',
           label: 'README',
           position: 'right',
         },
         {
-          href: 'https://github.com/skgandikota/orchestrator',
+          href: 'https://github.com/skgandikota/coracle',
           label: 'GitHub',
           position: 'right',
         },
         {
-          href: 'https://github.com/skgandikota/orchestrator/blob/main/LICENSE',
+          href: 'https://github.com/skgandikota/coracle/blob/main/LICENSE',
           label: 'License',
           position: 'right',
         },
@@ -100,20 +100,20 @@ const config: Config = {
           items: [
             {
               label: 'README',
-              href: 'https://github.com/skgandikota/orchestrator#readme',
+              href: 'https://github.com/skgandikota/coracle#readme',
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/skgandikota/orchestrator',
+              href: 'https://github.com/skgandikota/coracle',
             },
             {
               label: 'License',
-              href: 'https://github.com/skgandikota/orchestrator/blob/main/LICENSE',
+              href: 'https://github.com/skgandikota/coracle/blob/main/LICENSE',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} skgandikota — Orchestrator. Licensed CC BY-NC-SA 4.0.`,
+      copyright: `Copyright © ${new Date().getFullYear()} skgandikota — Coracle. Licensed CC BY-NC-SA 4.0.`,
     },
     prism: {
       theme: prismThemes.github,

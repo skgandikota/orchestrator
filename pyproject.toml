@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "orchestrator"
+name = "coracle"
 dynamic = ["version"]
-description = "Local-first agent orchestrator (Phase 1 skeleton)."
+description = "Local-first agent coracle (Phase 1 skeleton)."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "CC-BY-NC-SA-4.0" }
@@ -38,7 +38,7 @@ dependencies = [
 ]
 
 [project.scripts]
-orchestrator = "orchestrator.interfaces.cli:app"
+coracle = "coracle.interfaces.cli:app"
 
 [project.optional-dependencies]
 dev = [
@@ -66,16 +66,16 @@ evals = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/skgandikota/orchestrator"
-Issues = "https://github.com/skgandikota/orchestrator/issues"
-Source = "https://github.com/skgandikota/orchestrator"
+Homepage = "https://github.com/skgandikota/coracle"
+Issues = "https://github.com/skgandikota/coracle/issues"
+Source = "https://github.com/skgandikota/coracle"
 
 [tool.setuptools.packages.find]
-include = ["orchestrator*", "evals*"]
+include = ["coracle*", "evals*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-orchestrator = ["config/*.toml", "core/migrations/*.sql"]
+coracle = ["config/*.toml", "core/migrations/*.sql"]
 
 [tool.setuptools_scm]
 fallback_version = "0.1.0.dev0"
@@ -119,19 +119,19 @@ ignore_missing_imports = true
 # tighten per-module as code is refactored.
 [[tool.mypy.overrides]]
 module = [
-    "orchestrator.config.settings",
-    "orchestrator.observability.otel",
-    "orchestrator.tools.shell",
-    "orchestrator.tools.web",
-    "orchestrator.tools._registrations",
-    "orchestrator.tools.mcp_client",
-    "orchestrator.core.pipeline.consolidate",
-    "orchestrator.interfaces.cli",
-    "orchestrator.api.tasks",
-    "orchestrator.api.openai_compat",
-    "orchestrator.models.big_ai.litellm_router",
-    "orchestrator.pipeline.parse",
-    "orchestrator.core.classifier",
+    "coracle.config.settings",
+    "coracle.observability.otel",
+    "coracle.tools.shell",
+    "coracle.tools.web",
+    "coracle.tools._registrations",
+    "coracle.tools.mcp_client",
+    "coracle.core.pipeline.consolidate",
+    "coracle.interfaces.cli",
+    "coracle.api.tasks",
+    "coracle.api.openai_compat",
+    "coracle.models.big_ai.litellm_router",
+    "coracle.pipeline.parse",
+    "coracle.core.classifier",
 ]
 ignore_errors = true
 
@@ -146,7 +146,7 @@ markers = [
 asyncio_mode = "strict"
 
 [tool.coverage.run]
-source = ["orchestrator", "evals"]
+source = ["coracle", "evals"]
 branch = true
 
 [tool.coverage.report]

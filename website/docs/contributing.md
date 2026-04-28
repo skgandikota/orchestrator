@@ -3,9 +3,9 @@ sidebar_position: 5
 title: Contributing
 ---
 
-> Mirrored from [CONTRIBUTING.md](https://github.com/skgandikota/orchestrator/blob/main/CONTRIBUTING.md). Edit there.
+> Mirrored from [CONTRIBUTING.md](https://github.com/skgandikota/coracle/blob/main/CONTRIBUTING.md). Edit there.
 
-# Contributing to orchestrator
+# Contributing to coracle
 
 Welcome! This project is **agent-friendly** — issues are written so that humans *and* coding agents (Claude Code, opencode, codex, Cursor, etc.) can pick them up cold and submit a working pull request.
 
@@ -78,7 +78,7 @@ gh pr create --fill --body "Closes #12"
 See [`docs/PLAN.md`](docs/PLAN.md#high-level-architecture). In short:
 
 ```
-orchestrator/
+coracle/
 ├── core/         # scheduler, state, pipeline, ram_monitor, classifier
 ├── models/       # ollama_local, big_ai/, narrator
 ├── tools/        # fs, shell, web, browser, git, registry
@@ -93,7 +93,7 @@ orchestrator/
 - **Integration tests** that need Ollama: mark with `@pytest.mark.ollama` and skip by default in CI.
 - **Integration tests** that need API keys: mark with `@pytest.mark.live` and skip by default.
 - Mock all big-AI providers via `litellm` mock backends in unit tests.
-- **Coverage gate:** `pytest --cov=orchestrator --cov-fail-under=95` is enforced in CI. PRs that drop coverage below 95% will fail. Use `# pragma: no cover` only for genuinely-untestable branches (e.g. real subprocess fork paths).
+- **Coverage gate:** `pytest --cov=coracle --cov-fail-under=95` is enforced in CI. PRs that drop coverage below 95% will fail. Use `# pragma: no cover` only for genuinely-untestable branches (e.g. real subprocess fork paths).
 
 ## Signed commits (mandatory)
 
@@ -120,7 +120,7 @@ git config --global commit.gpgsign true
 Verify:
 ```bash
 git log --show-signature -1
-gh api /repos/skgandikota/orchestrator/commits/<sha> --jq '.commit.verification'
+gh api /repos/skgandikota/coracle/commits/<sha> --jq '.commit.verification'
 # expect: verified=true, reason=valid
 ```
 
@@ -149,7 +149,7 @@ These are non-negotiable for any change:
 4. **All long-running work is a job with an ID.** APIs return `job_id` immediately; clients stream/poll.
 5. **Provider fallback is automatic** — no caller should hardcode a provider.
 6. **Browser drivers are separate subprocesses** — never in-process with the main app.
-7. **One external model name: `orchestrator`.** The classifier picks the pipeline, not the user.
+7. **One external model name: `coracle`.** The classifier picks the pipeline, not the user.
 
 If your change conflicts with one of these, open a discussion issue before coding.
 

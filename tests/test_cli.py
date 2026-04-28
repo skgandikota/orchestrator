@@ -1,4 +1,4 @@
-"""Tests for the orchestrator CLI."""
+"""Tests for the coracle CLI."""
 
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ from typing import Any
 
 import pytest
 
-from orchestrator import cli
-from orchestrator.tools.mcp_client import ServerSpec
+from coracle import cli
+from coracle.tools.mcp_client import ServerSpec
 from tests.tools.test_mcp_client import FakeSession, _FakeTool
 
 

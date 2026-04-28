@@ -13,14 +13,14 @@ from typing import Any
 
 import pytest
 
-from orchestrator.tools.mcp_client import (
+from coracle.tools.mcp_client import (
     MCPClientError,
     MCPManager,
     ServerSpec,
     expand_env,
     load_config,
 )
-from orchestrator.tools.registry import Registry
+from coracle.tools.registry import Registry
 
 # --------------------------------------------------------------------------- #
 # Fake MCP session
@@ -574,7 +574,7 @@ def test_disconnect_swallows_close_errors(tmp_path: Path) -> None:
 
 def test_tool_listing_supports_dict_entries(tmp_path: Path) -> None:
     """The fake's content extractor handles dict-shaped tools and content."""
-    from orchestrator.tools.mcp_client import _content_to_text
+    from coracle.tools.mcp_client import _content_to_text
 
     assert _content_to_text(None) == ""
     assert _content_to_text("plain") == "plain"
@@ -611,7 +611,7 @@ def test_tool_listing_supports_dict_entries(tmp_path: Path) -> None:
 
 
 def test_default_registry_is_used_when_unspecified(tmp_path: Path) -> None:
-    from orchestrator.tools.registry import default_registry
+    from coracle.tools.registry import default_registry
 
     default_registry.clear()
     cfg = _write(tmp_path / "c.yaml", _config_with(_entry("z", prefix="z_")))

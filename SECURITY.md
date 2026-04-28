@@ -1,6 +1,6 @@
 # Security Policy
 
-`skgandikota/orchestrator` is a personal, single-maintainer project. There is
+`skgandikota/coracle` is a personal, single-maintainer project. There is
 **no bug bounty**, but security reports are taken seriously and triaged ahead
 of feature work.
 
@@ -15,7 +15,7 @@ Only the `main` branch is supported. There are no released versions yet
 
 Use GitHub's **Private Vulnerability Reporting** to file a confidential report:
 
-- <https://github.com/skgandikota/orchestrator/security/advisories/new>
+- <https://github.com/skgandikota/coracle/security/advisories/new>
 
 Include, where possible:
 
@@ -33,7 +33,7 @@ on `main`, whichever comes first.
 
 In scope:
 
-- The `orchestrator` Python package and shipped configuration.
+- The `coracle` Python package and shipped configuration.
 - CI workflows under `.github/workflows/` (supply-chain and permission issues).
 - Documented integration surfaces (the OpenAI-compatible HTTP interface and
   the local tool belt described in `docs/PLAN.md`).

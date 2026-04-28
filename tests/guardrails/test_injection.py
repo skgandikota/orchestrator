@@ -1,4 +1,4 @@
-from orchestrator.guardrails import injection
+from coracle.guardrails import injection
 
 
 def test_detect_ignore_previous_instructions():

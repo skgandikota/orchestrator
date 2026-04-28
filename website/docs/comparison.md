@@ -3,27 +3,27 @@ sidebar_position: 3
 title: Comparison vs LiteLLM
 ---
 
-> Mirrored from [docs/VS_LITELLM.md](https://github.com/skgandikota/orchestrator/blob/main/docs/VS_LITELLM.md). Edit there.
+> Mirrored from [docs/VS_LITELLM.md](https://github.com/skgandikota/coracle/blob/main/docs/VS_LITELLM.md). Edit there.
 
-# How `orchestrator` differs from LiteLLM
+# How `coracle` differs from LiteLLM
 
 [LiteLLM](https://github.com/BerriAI/litellm) is an excellent, commercially-backed **AI Gateway**. We use its Python SDK as our provider abstraction layer (#8). But the **product** is a different thing entirely. This page exists so contributors and users can understand the line in 30 seconds.
 
 ## TL;DR
 
-| | **LiteLLM** | **`orchestrator`** |
+| | **LiteLLM** | **`coracle`** |
 |---|---|---|
 | **Audience** | Teams / orgs running paid LLM workloads at scale | One person on a laptop, paying nothing |
 | **Cost model** | Pay-per-token via your provider keys | $0 — free tiers + local Ollama + headless-browser fallback |
-| **Topology** | Stateless proxy / gateway | Stateful orchestrator with a job lifecycle |
+| **Topology** | Stateless proxy / gateway | Stateful coracle with a job lifecycle |
 | **Inference location** | Cloud-first; local is just-another-provider | Local-first; cloud is just-the-planner |
 | **RAM model** | Server-class (32GB+); concurrency is the goal | 16GB Mac M1; concurrency would crash the box |
 | **Request shape** | One call → one provider → one response | One call → classify → consolidate → refine → big-AI plan → parse → local execute → verify |
 | **What sees the LLM** | Every request | Only after a local classifier decides the request needs one |
-| **Tool execution** | Returns the tool-call JSON; caller executes | Orchestrator **executes** tools (fs, shell, git, browser, MCP) inside a sandbox |
+| **Tool execution** | Returns the tool-call JSON; caller executes | Coracle **executes** tools (fs, shell, git, browser, MCP) inside a sandbox |
 | **Failure mode for "free quota exhausted"** | Caller's problem | Automatic provider fallback, then headless-browser fallback to web UIs |
 | **Status / progress UX** | None — proxy is stateless | First-class: status query never loads an LLM |
-| **MCP** | Gateway: proxy upstream MCPs to LLMs (#45 parity here) | Same gateway shape **plus** orchestrator-as-MCP-server (#17) and config-driven MCP-client (#45) |
+| **MCP** | Gateway: proxy upstream MCPs to LLMs (#45 parity here) | Same gateway shape **plus** coracle-as-MCP-server (#17) and config-driven MCP-client (#45) |
 | **A2A** | First-class agent gateway | Out of scope (single-agent personal tool) |
 | **Multi-tenancy** | Virtual keys, spend tracking, admin dashboard | Single-user; localhost-bound by default |
 | **Latency target** | 8 ms P95 at 1k RPS | Doesn't matter; correctness > throughput |
@@ -64,7 +64,7 @@ title: Comparison vs LiteLLM
 
 LiteLLM is the right answer if you have a budget, a fleet of paid LLM keys, and need ten thousand requests per second routed through one endpoint with audit and RBAC.
 
-`orchestrator` is the right answer if you have **one laptop**, **zero budget**, **two 7B local models**, and want a coding agent that *just works* by spending free-tier credits intelligently and falling back to a browser when those run out.
+`coracle` is the right answer if you have **one laptop**, **zero budget**, **two 7B local models**, and want a coding agent that *just works* by spending free-tier credits intelligently and falling back to a browser when those run out.
 
 They're complementary, not competing. We import `litellm` as a library; LiteLLM users will never need us.
 

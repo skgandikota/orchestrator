@@ -1,6 +1,6 @@
 import pytest
 
-from orchestrator.guardrails import budget
+from coracle.guardrails import budget
 
 
 def test_estimate_tokens_basic():

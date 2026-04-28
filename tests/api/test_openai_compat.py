@@ -9,8 +9,8 @@ from collections.abc import AsyncIterator, Iterator
 import pytest
 from fastapi.testclient import TestClient
 
-from orchestrator.api import create_app, openai_compat
-from orchestrator.api.openai_compat import (
+from coracle.api import create_app, openai_compat
+from coracle.api.openai_compat import (
     MODEL_IDS,
     ChatBackend,
     Message,
@@ -75,7 +75,7 @@ def test_list_models_shape(client: TestClient) -> None:
     assert ids == list(MODEL_IDS)
     for m in body["data"]:
         assert m["object"] == "model"
-        assert m["owned_by"] == "orchestrator"
+        assert m["owned_by"] == "coracle"
         assert isinstance(m["created"], int)
 
 
@@ -83,7 +83,7 @@ def test_chat_completion_non_stream(client: TestClient, fake_backend: FakeBacken
     resp = client.post(
         "/v1/chat/completions",
         json={
-            "model": "orchestrator",
+            "model": "coracle",
             "messages": [{"role": "user", "content": "hi"}],
             "temperature": 0.1,
             "max_tokens": 16,
@@ -93,7 +93,7 @@ def test_chat_completion_non_stream(client: TestClient, fake_backend: FakeBacken
     body = resp.json()
     assert body["object"] == "chat.completion"
     assert body["id"].startswith("chatcmpl-")
-    assert body["model"] == "orchestrator"
+    assert body["model"] == "coracle"
     assert body["choices"][0]["finish_reason"] == "stop"
     assert body["choices"][0]["message"] == {
         "role": "assistant",
@@ -101,7 +101,7 @@ def test_chat_completion_non_stream(client: TestClient, fake_backend: FakeBacken
     }
     usage = body["usage"]
     assert usage["total_tokens"] == usage["prompt_tokens"] + usage["completion_tokens"]
-    assert fake_backend.calls[0]["model"] == "orchestrator"
+    assert fake_backend.calls[0]["model"] == "coracle"
     assert fake_backend.calls[0]["temperature"] == 0.1
     assert fake_backend.calls[0]["max_tokens"] == 16
 
@@ -111,7 +111,7 @@ def test_chat_completion_stream_sse(client: TestClient) -> None:
         "POST",
         "/v1/chat/completions",
         json={
-            "model": "orchestrator-fast",
+            "model": "coracle-fast",
             "messages": [{"role": "user", "content": "stream please"}],
             "stream": True,
         },
@@ -126,14 +126,14 @@ def test_chat_completion_stream_sse(client: TestClient) -> None:
     payloads = [json.loads(line.removeprefix("data: ")) for line in lines[:-1]]
     assert payloads[0]["choices"][0]["delta"] == {"role": "assistant"}
     assert all(p["object"] == "chat.completion.chunk" for p in payloads)
-    assert all(p["model"] == "orchestrator-fast" for p in payloads)
+    assert all(p["model"] == "coracle-fast" for p in payloads)
     content_pieces = [
         p["choices"][0]["delta"].get("content", "")
         for p in payloads
         if "content" in p["choices"][0]["delta"]
     ]
     joined = "".join(content_pieces)
-    assert "[classify:orchestrator-fast]" in joined
+    assert "[classify:coracle-fast]" in joined
     assert "[consolidate] ctx" in joined
     assert "[step:plan]" in joined
     assert "hello world" in joined
@@ -143,7 +143,7 @@ def test_chat_completion_stream_sse(client: TestClient) -> None:
 def test_completions_shim(client: TestClient) -> None:
     resp = client.post(
         "/v1/completions",
-        json={"model": "orchestrator-deep", "prompt": "ping"},
+        json={"model": "coracle-deep", "prompt": "ping"},
     )
     assert resp.status_code == 200
     body = resp.json()
@@ -159,7 +159,7 @@ def test_completions_stream(client: TestClient) -> None:
     with client.stream(
         "POST",
         "/v1/completions",
-        json={"model": "orchestrator-research", "prompt": "p", "stream": True},
+        json={"model": "coracle-research", "prompt": "p", "stream": True},
     ) as resp:
         assert resp.status_code == 200
         body = b"".join(resp.iter_bytes()).decode("utf-8")
@@ -186,7 +186,7 @@ def test_unknown_model_rejected_completions(client: TestClient) -> None:
 def test_bearer_auth_required_when_token_set(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setenv("ORCHESTRATOR_API_TOKEN", "secret")
+    monkeypatch.setenv("CORACLE_API_TOKEN", "secret")
     resp = client.get("/v1/models")
     assert resp.status_code == 401
     resp = client.get("/v1/models", headers={"Authorization": "Bearer nope"})
@@ -205,7 +205,7 @@ def test_stub_backend_emits_all_event_types() -> None:
             ev
             async for ev in backend.stream(
                 job_id="job",
-                model="orchestrator",
+                model="coracle",
                 messages=[
                     Message(role="system", content="ignored"),
                     Message(role="user", content=""),

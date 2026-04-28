@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 
 import pytest
 
-from orchestrator.core.scheduler import (
+from coracle.core.scheduler import (
     InsufficientRamError,
     LlmSlotScheduler,
     SlotHandle,

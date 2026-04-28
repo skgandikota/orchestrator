@@ -7,10 +7,10 @@ from typing import Any, ClassVar
 
 import pytest
 
-from orchestrator.guardrails import build_default_pipeline
-from orchestrator.guardrails.pipeline import GuardrailPipeline
-from orchestrator.pipeline.execute import ExecutableStep, execute
-from orchestrator.pipeline.refine import RefineError, refine
+from coracle.guardrails import build_default_pipeline
+from coracle.guardrails.pipeline import GuardrailPipeline
+from coracle.pipeline.execute import ExecutableStep, execute
+from coracle.pipeline.refine import RefineError, refine
 
 
 class _Brief:

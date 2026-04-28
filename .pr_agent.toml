@@ -26,7 +26,7 @@ num_code_suggestions = 4
 inline_code_comments = true
 ask_and_reflect = false
 extra_instructions = """
-This is a memory-constrained Python orchestrator (16GB host).
+This is a memory-constrained Python coracle (16GB host).
 - Flag any unbounded buffers, missing model.unload(), sync calls in async code.
 - Sanitize all tool inputs (paths, URLs, shell args).
 - Tests must mock external calls; never live network or real browsers in CI.

@@ -1,10 +1,10 @@
 # Security model (internal)
 
 This document describes the architectural security properties of
-`orchestrator`. It is the long-form complement to the top-level
+`coracle`. It is the long-form complement to the top-level
 [`SECURITY.md`](../SECURITY.md), which covers vulnerability reporting.
 
-`orchestrator` is a **personal-machine** tool. The operator (a developer
+`coracle` is a **personal-machine** tool. The operator (a developer
 running it on their own laptop) is inside the trust boundary; everything
 outside that boundary — third-party APIs, downloaded models, generated code,
 shell commands suggested by an LLM — is treated as untrusted.
@@ -59,7 +59,7 @@ never the operator's home directory.
 ### Secrets handling
 
 - API keys live in the operator's `.env` and are loaded into the
-  orchestrator process, **not** the child model's context window.
+  coracle process, **not** the child model's context window.
 - Tool outputs are scrubbed for known credential shapes
   (`sk-…`, `ghp_…`, AWS access keys, etc.) before being persisted to the
   SQLite job log.

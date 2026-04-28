@@ -7,7 +7,7 @@ name: PR Reviewer Bot
 #
 # Required repo secrets (Settings → Secrets and variables → Actions):
 #   SKGANDIKOTA_APPID            — GitHub App ID (numeric)
-#   SKGANDIKOTA_INSTALLATIONID   — App installation ID for skgandikota/orchestrator
+#   SKGANDIKOTA_INSTALLATIONID   — App installation ID for skgandikota/coracle
 #   SKGANDIKOTA_PRIVATEKEY       — App private key (PEM, full multiline)
 #
 # The App must have these repository permissions:
@@ -72,7 +72,7 @@ jobs:
           app-id: ${{ secrets.SKGANDIKOTA_APPID }}
           private-key: ${{ secrets.SKGANDIKOTA_PRIVATEKEY }}
           owner: skgandikota
-          repositories: orchestrator
+          repositories: coracle
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -86,5 +86,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app.outputs.token }}
           PR_NUMBER: ${{ steps.pr.outputs.num }}
-          REPO: skgandikota/orchestrator
+          REPO: skgandikota/coracle
         run: python .github/scripts/pr_reviewer.py
