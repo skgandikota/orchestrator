@@ -64,7 +64,7 @@ jobs:
           fi
 
       - name: Checkout reviewer script (from main)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
 
