@@ -28,6 +28,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from orchestrator.runtime.status import snapshot as build_snapshot
+from orchestrator.runtime.status_b import status_b as build_status_b
 
 __all__ = [
     "Job",
@@ -118,10 +119,20 @@ async def _default_runner(job: Job, mgr: JobManager) -> None:
 class JobManager:
     """Owns job lifecycle, event fan-out, and cancellation."""
 
-    def __init__(self, runner: PipelineRunner | None = None) -> None:
+    def __init__(
+        self,
+        runner: PipelineRunner | None = None,
+        *,
+        narrator: Any | None = None,
+    ) -> None:
         self._jobs: dict[str, Job] = {}
         self._runner: PipelineRunner = runner or _default_runner
         self._tasks: dict[str, asyncio.Task[None]] = {}
+        self._narrator = narrator
+
+    def set_narrator(self, narrator: Any | None) -> None:
+        """Install (or clear) the status mode B narrator. Test hook."""
+        self._narrator = narrator
 
     def get(self, job_id: str) -> Job:
         """Look up a job, raising 404 if unknown."""
@@ -206,12 +217,7 @@ class JobManager:
                 "class": job.job_class,
             }
         if mode == "b":
-            last = job.events[-1].kind if job.events else "idle"
-            return {
-                "mode": "b",
-                "status": job.status.value,
-                "narration": f"job {job.id} is {job.status.value}; last event={last}",
-            }
+            return build_status_b(job, narrator=self._narrator)
         if mode == "c":
             return {
                 "mode": "c",

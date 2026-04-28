@@ -27,6 +27,15 @@ json = false
 [state]
 db_path = "./orchestrator.db"
 
+[status]
+# Mode B narrator (issue #14). Off by default. When enabled, a small
+# qwen2.5:1.5b model is held resident OUTSIDE the single-slot scheduler;
+# this adds ~1GB of resident RAM, so reduce the scheduler RAM budget
+# accordingly.
+narrator_enabled = false
+narrator_model = "qwen2.5:1.5b"
+narrator_max_tokens = 80
+
 [tools.fs]
 # Sandbox root for every filesystem tool. Override with
 # ORCHESTRATOR__TOOLS__FS__WORKSPACE_ROOT.

@@ -126,7 +126,11 @@ def test_status_modes_a_b_c(client: TestClient) -> None:
     assert a == {"mode": "a", "status": "completed", "steps_done": 1, "class": "chat"}
 
     b = client.post(f"/jobs/{job_id}/status", json={"mode": "b"}).json()
-    assert b["mode"] == "b" and "narration" in b and b["status"] == "completed"
+    # Mode B falls back to mode-A snapshot + narrator_disabled when the
+    # narrator is off (default per [status] narrator_enabled = false).
+    assert b["mode"] == "b"
+    assert b["narrator_disabled"] is True
+    assert b["phase"] == "completed"
 
     c = client.post(f"/jobs/{job_id}/status", json={"mode": "c"}).json()
     assert c["mode"] == "c"
@@ -153,7 +157,10 @@ def test_status_mode_b_idle_when_no_events() -> None:
     mgr = JobManager()
     job = Job(id="x", user_msg="m", model=None)
     payload = mgr.status_payload(job, "b")
-    assert "idle" in payload["narration"]
+    # Default narrator is off: mode B returns mode-A snapshot + flag.
+    assert payload["mode"] == "b"
+    assert payload["narrator_disabled"] is True
+    assert payload["phase"] == "queued"
 
 
 def test_status_unknown_job_404(client: TestClient) -> None:

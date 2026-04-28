@@ -21,6 +21,7 @@ __all__ = [
     "SettingsError",
     "ShellToolSettings",
     "StateSettings",
+    "StatusSettings",
     "ToolsSettings",
     "WebToolSettings",
     "load_settings",
@@ -133,6 +134,14 @@ class GuardrailsSettings(BaseModel):
     max_token_fraction: float = Field(0.8, gt=0.0, le=1.0)
 
 
+class StatusSettings(BaseModel):
+    """Settings for the status subsystem (mode B narrator, issue #14)."""
+
+    narrator_enabled: bool = False
+    narrator_model: str = "qwen2.5:1.5b"
+    narrator_max_tokens: int = Field(80, ge=1)
+
+
 class ToolsSettings(BaseModel):
     fs: FsToolSettings = Field(default_factory=FsToolSettings)
     shell: ShellToolSettings = Field(default_factory=ShellToolSettings)
@@ -145,6 +154,7 @@ class Settings(BaseModel):
     ollama: OllamaSettings = Field(default_factory=OllamaSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
     state: StateSettings = Field(default_factory=StateSettings)
+    status: StatusSettings = Field(default_factory=StatusSettings)
     tools: ToolsSettings = Field(default_factory=ToolsSettings)
     guardrails: GuardrailsSettings = Field(default_factory=GuardrailsSettings)
 
