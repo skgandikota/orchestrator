@@ -29,12 +29,12 @@ dependencies = [
     "pyyaml>=6.0",
     "jsonschema>=4.21",
     "jsonschema>=4.26.0",
-    "jsonschema>=4.21",
     "litellm>=1.50",
+    "typer>=0.12",
 ]
 
 [project.scripts]
-orchestrator = "orchestrator.cli:main"
+orchestrator = "orchestrator.interfaces.cli:app"
 
 [project.optional-dependencies]
 dev = [
