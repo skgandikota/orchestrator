@@ -1,0 +1,36 @@
+{"prompt": "what's the status of the deploy?", "expected": "status", "notes": "direct status query"}
+{"prompt": "progress on the migration ticket?", "expected": "status", "notes": "progress keyword"}
+{"prompt": "where are we with the refactor I asked for?", "expected": "status", "notes": "where-are-we phrasing"}
+{"prompt": "give me an update on the running job", "expected": "status", "notes": "update phrasing"}
+{"prompt": "how is the research task going?", "expected": "status", "notes": "edge case: status check on a research task"}
+{"prompt": "status please", "expected": "status", "notes": "minimal status query"}
+{"prompt": "progress report on yesterday's deep refactor", "expected": "status", "notes": "tricky: mentions deep but is a status query"}
+{"prompt": "what's happening with the ingest pipeline run?", "expected": "status", "notes": "what's happening phrasing"}
+{"prompt": "what is 2 + 2?", "expected": "fast", "notes": "trivial arithmetic"}
+{"prompt": "translate 'good morning' into French", "expected": "fast", "notes": "single-shot translation"}
+{"prompt": "capital of Australia?", "expected": "fast", "notes": "single fact lookup"}
+{"prompt": "convert 100 USD to EUR", "expected": "fast", "notes": "trivial conversion"}
+{"prompt": "spell 'accommodate'", "expected": "fast", "notes": "spelling lookup"}
+{"prompt": "what does 'TTL' stand for?", "expected": "fast", "notes": "acronym expansion"}
+{"prompt": "summarize this paragraph in one sentence: ...", "expected": "fast", "notes": "short summary"}
+{"prompt": "give me a one-line definition of 'idempotent'", "expected": "fast", "notes": "definition lookup"}
+{"prompt": "refactor the auth middleware to drop the global state", "expected": "deep", "notes": "refactor keyword"}
+{"prompt": "design an event-sourced inventory module with snapshots", "expected": "deep", "notes": "design keyword"}
+{"prompt": "implement a least-recently-used cache in Python with TTL", "expected": "deep", "notes": "implement keyword"}
+{"prompt": "analyse why our P99 latency spiked last Tuesday", "expected": "deep", "notes": "analysis keyword"}
+{"prompt": "debug the flaky integration test in payments", "expected": "deep", "notes": "debug keyword"}
+{"prompt": "find the root cause of the deadlock in the scheduler", "expected": "deep", "notes": "root cause keyword"}
+{"prompt": "review architecture for the new billing service", "expected": "deep", "notes": "architecture keyword"}
+{"prompt": "deep dive on the GC tuning options for our heap", "expected": "deep", "notes": "deep dive keyword"}
+{"prompt": "research the best vector database for low-latency RAG", "expected": "research", "notes": "research keyword"}
+{"prompt": "compare Postgres logical replication vs Debezium", "expected": "research", "notes": "compare keyword"}
+{"prompt": "investigate which authentication libraries support WebAuthn", "expected": "research", "notes": "investigate keyword"}
+{"prompt": "survey current literature on differential privacy for telemetry", "expected": "research", "notes": "survey keyword"}
+{"prompt": "find sources that discuss async Python performance in 2025", "expected": "research", "notes": "find sources phrasing"}
+{"prompt": "cite peer-reviewed work on retrieval-augmented generation", "expected": "research", "notes": "cite keyword"}
+{"prompt": "research the trade-offs between gRPC and Cap'n Proto", "expected": "research", "notes": "comparative research"}
+{"prompt": "investigate vendor options for managed OpenSearch", "expected": "research", "notes": "vendor research"}
+{"prompt": "what time is it in Tokyo right now?", "expected": "fast", "notes": "edge case: trivial fact, not status"}
+{"prompt": "compare CPython and PyPy startup latency", "expected": "research", "notes": "edge case: compare without 'research'"}
+{"prompt": "implement a binary search tree with deletion", "expected": "deep", "notes": "implementation request"}
+{"prompt": "where are we on the OAuth migration?", "expected": "status", "notes": "edge case: status with project keyword"}
