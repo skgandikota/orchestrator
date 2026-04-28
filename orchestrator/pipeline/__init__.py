@@ -13,6 +13,13 @@ from .execute import (
     execute,
 )
 from .execute import ExecutableStep as ExecutableStep
+from .plan import (
+    BigModelRouter,
+    EventHandler,
+    PlanError,
+    PlanStepKind,
+    plan,
+)
 from .refine import (
     ConsolidatedBrief,
     ModelClient,
@@ -30,15 +37,19 @@ from .verify import (
 )
 
 __all__ = [
+    "BigModelRouter",
     "CoderClient",
     "ConsolidatedBrief",
+    "EventHandler",
     "ExecutableStep",
     "ExecuteError",
     "IterationCapError",
     "ModelClient",
     "OllamaClient",
     "Plan",
+    "PlanError",
     "PlanStep",
+    "PlanStepKind",
     "RefineError",
     "RefinedPrompt",
     "Scheduler",
@@ -48,6 +59,7 @@ __all__ = [
     "ToolRegistry",
     "VerifyDecision",
     "execute",
+    "plan",
     "refine",
     "verify",
 ]
