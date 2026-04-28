@@ -22,7 +22,7 @@ import logging
 import re
 from collections.abc import Iterable
 from enum import StrEnum
-from importlib import resources
+from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
 from jsonschema import Draft202012Validator, ValidationError
@@ -140,14 +140,13 @@ _TOOL_CALL_RE = re.compile(
 )
 
 
+_PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
+
+
 def load_repair_prompt() -> str:
     """Return the bundled repair prompt template."""
 
-    return (
-        resources.files("orchestrator.prompts")
-        .joinpath("parse_repair.md")
-        .read_text(encoding="utf-8")
-    )
+    return (_PROMPTS_DIR / "parse_repair.md").read_text(encoding="utf-8")
 
 
 def parse_model_output(

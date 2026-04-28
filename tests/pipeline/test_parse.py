@@ -10,8 +10,8 @@ import pytest
 from orchestrator.pipeline import (
     ActionItem,
     ActionType,
-    ParseModelClient,
     ParsedActions,
+    ParseModelClient,
     load_repair_prompt,
     parse_model_output,
 )
@@ -36,7 +36,7 @@ class ExplodingModel:
         raise RuntimeError("boom")
 
 
-def test_ParseModelClient_protocol_is_runtime_checkable() -> None:
+def test_parse_modelclient_protocol_is_runtime_checkable() -> None:
     assert isinstance(FakeModel("x"), ParseModelClient)
     assert not isinstance(object(), ParseModelClient)
 
