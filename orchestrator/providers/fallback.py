@@ -258,7 +258,9 @@ class FallbackChain:
         cooldown_seconds: float = 60.0,
         actor: str = "providers.fallback",
         clock: Any = time.monotonic,
+        pre_attempt_check: Any = None,
     ) -> None:
+        self._pre_attempt_check = pre_attempt_check
         if not providers and browser_provider is None:
             raise ValueError("FallbackChain requires at least one provider")
         self._providers: tuple[Provider, ...] = tuple(providers)
@@ -339,6 +341,17 @@ class FallbackChain:
         failures: list[tuple[str, BaseException]],
     ) -> Any:
         breaker = self._breakers[provider.id]
+        if self._pre_attempt_check is not None and not self._pre_attempt_check(provider.id):
+            quota_exc: ProviderError = QuotaExceeded(f"quota exhausted for {provider.id!r}")
+            failures.append((provider.id, quota_exc))
+            audit.record(
+                actor=self._actor,
+                action="provider_skipped",
+                target=provider.id,
+                status="warn",
+                payload={"reason": "quota_exhausted"},
+            )
+            return _MISS
         if not breaker.allow():
             skip_exc = ProviderUnavailable(f"circuit breaker OPEN for {provider.id!r}")
             failures.append((provider.id, skip_exc))
