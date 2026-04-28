@@ -29,13 +29,22 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from orchestrator.api._mcp_attach import (
+    AttachedTools,
+    MCPServerRequest,
+    attach_mcp_tools,
+)
+
 __all__ = [
     "MODEL_IDS",
+    "AttachedTools",
     "ChatBackend",
     "ChatCompletionRequest",
     "CompletionRequest",
+    "MCPServerRequest",
     "Message",
     "PipelineEvent",
+    "attach_mcp_tools",
     "build_router",
     "set_backend",
 ]
@@ -66,6 +75,8 @@ class ChatCompletionRequest(BaseModel):
     stream: bool = False
     temperature: float | None = None
     max_tokens: int | None = Field(default=None, ge=1)
+    tools: list[dict[str, Any]] | None = None
+    mcp_servers: list[MCPServerRequest] | None = None
 
 
 class CompletionRequest(BaseModel):
@@ -279,7 +290,11 @@ def _assemble_content(events: Iterable[PipelineEvent]) -> str:
     return "".join(parts)
 
 
-async def _stream_chat_response(req: ChatCompletionRequest) -> AsyncIterator[str]:
+async def _stream_chat_response(
+    req: ChatCompletionRequest,
+    *,
+    attached: AttachedTools | None = None,
+) -> AsyncIterator[str]:
     job_id = uuid.uuid4().hex[:12]
     completion_id = _new_completion_id(job_id)
     created = int(time.time())
@@ -293,6 +308,22 @@ async def _stream_chat_response(req: ChatCompletionRequest) -> AsyncIterator[str
             delta={"role": "assistant"},
         )
     )
+
+    if attached is not None and (attached.tool_names or attached.errors):
+        yield _sse(
+            _chunk_payload(
+                completion_id=completion_id,
+                created=created,
+                model=req.model,
+                delta={
+                    "mcp": {
+                        "servers": list(attached.servers),
+                        "tools": list(attached.tool_names),
+                        "errors": dict(attached.errors),
+                    }
+                },
+            )
+        )
 
     async for event in backend.stream(
         job_id=job_id,
@@ -353,34 +384,48 @@ def build_router() -> APIRouter:
     @router.post("/chat/completions")
     async def chat_completions(req: ChatCompletionRequest) -> Any:
         _validate_model(req.model)
-        if req.stream:
-            return StreamingResponse(
-                _stream_chat_response(req),
-                media_type="text/event-stream",
-            )
+        attached: AttachedTools | None = None
+        if req.mcp_servers:
+            attached = await attach_mcp_tools(req.mcp_servers)
+        try:
+            if req.stream:
+                return StreamingResponse(
+                    _stream_chat_response(req, attached=attached),
+                    media_type="text/event-stream",
+                )
 
-        job_id, events = await _run_chat(req=req)
-        content = _assemble_content(events)
-        prompt_tokens = _prompt_tokens(req.messages)
-        completion_tokens = _approx_tokens(content)
-        return {
-            "id": _new_completion_id(job_id),
-            "object": "chat.completion",
-            "created": int(time.time()),
-            "model": req.model,
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {"role": "assistant", "content": content},
-                    "finish_reason": "stop",
+            job_id, events = await _run_chat(req=req)
+            content = _assemble_content(events)
+            prompt_tokens = _prompt_tokens(req.messages)
+            completion_tokens = _approx_tokens(content)
+            payload: dict[str, Any] = {
+                "id": _new_completion_id(job_id),
+                "object": "chat.completion",
+                "created": int(time.time()),
+                "model": req.model,
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {"role": "assistant", "content": content},
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": prompt_tokens,
+                    "completion_tokens": completion_tokens,
+                    "total_tokens": prompt_tokens + completion_tokens,
+                },
+            }
+            if attached is not None:
+                payload["mcp"] = {
+                    "servers": list(attached.servers),
+                    "tools": list(attached.tool_names),
+                    "errors": dict(attached.errors),
                 }
-            ],
-            "usage": {
-                "prompt_tokens": prompt_tokens,
-                "completion_tokens": completion_tokens,
-                "total_tokens": prompt_tokens + completion_tokens,
-            },
-        }
+            return payload
+        finally:
+            if attached is not None:
+                await attached.aclose()
 
     @router.post("/completions")
     async def completions(req: CompletionRequest) -> Any:
