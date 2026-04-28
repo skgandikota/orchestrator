@@ -14,4 +14,26 @@ __all__ = [
     "RefineError",
     "RefinedPrompt",
     "refine",
+"""Pipeline package: ordered AI-driven steps."""
+
+from __future__ import annotations
+
+from .verify import (
+    ExecutableStep,
+    OllamaClient,
+    Plan,
+    PlanStep,
+    StateRecorder,
+    VerifyDecision,
+    verify,
+)
+
+__all__ = [
+    "ExecutableStep",
+    "OllamaClient",
+    "Plan",
+    "PlanStep",
+    "StateRecorder",
+    "VerifyDecision",
+    "verify",
 ]

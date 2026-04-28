@@ -44,7 +44,6 @@ orchestrator = "orchestrator.interfaces.cli:app"
 dev = [
     "pytest>=8",
     "pytest>=9.0.3",
-    "pytest>=8",
     "pytest-asyncio>=0.23",
     "pytest-cov>=5",
     "ruff>=0.6",
