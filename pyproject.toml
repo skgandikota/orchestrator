@@ -28,6 +28,9 @@ dependencies = [
     "mcp>=1.27.0,<2",
     "pyyaml>=6.0",
     "jsonschema>=4.21",
+    "jsonschema>=4.26.0",
+    "jsonschema>=4.21",
+    "litellm>=1.50",
 ]
 
 [project.scripts]

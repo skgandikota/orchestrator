@@ -36,3 +36,25 @@ deny = ["rm", "rmdir", "sudo", "su", "mv", "dd", "mkfs", "shutdown", "reboot", "
 [tools.web]
 user_agent = "orchestrator-bot/0.1 (+https://github.com/skgandikota/orchestrator)"
 allow_private = false
+
+# Big-AI providers (Phase 2).
+# Real keys come from env vars (GEMINI_API_KEY, GROQ_API_KEY, OLLAMA_CLOUD_API_KEY)
+# which override anything written here. Daily quotas are tracked in-process.
+[providers]
+order = ["gemini", "groq", "ollama_cloud"]
+
+[providers.gemini]
+litellm_model = "gemini/gemini-1.5-pro"
+api_key = ""
+daily_quota = 1500
+
+[providers.groq]
+litellm_model = "groq/llama-3.3-70b-versatile"
+api_key = ""
+daily_quota = 14400
+
+[providers.ollama_cloud]
+litellm_model = "ollama/llama3.1"
+api_key = ""
+base_url = "https://ollama.com"
+daily_quota = 10000
