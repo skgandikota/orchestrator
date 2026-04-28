@@ -42,6 +42,25 @@ opencode / Claude Code / codex
 
 Full design details: [`docs/PLAN.md`](docs/PLAN.md).
 
+## Run with Docker
+
+Multi-arch (`linux/amd64` + `linux/arm64`) images are published to GHCR by the
+[`release-image`](.github/workflows/release-image.yml) workflow. Two variants:
+
+- `ghcr.io/skgandikota/orchestrator` — slim runtime, no browser deps.
+- `ghcr.io/skgandikota/orchestrator-browser` — slim + Playwright/Chromium.
+
+```bash
+docker run --rm -p 8000:8000 \
+  -v "$HOME/.config/orchestrator:/etc/orchestrator" \
+  -v "$HOME/.local/share/orchestrator:/var/lib/orchestrator" \
+  ghcr.io/skgandikota/orchestrator:latest
+```
+
+Tags: `:latest` (newest semver), `:vX.Y.Z` / `:vX.Y` / `:vX` (per release),
+`:edge` (head of `main`). See [`docs/RELEASES.md`](docs/RELEASES.md) for the
+release process and verification steps.
+
 ## Integrations
 
 Per-tool how-to guides for plugging orchestrator into the coding agents
