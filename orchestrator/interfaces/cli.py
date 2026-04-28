@@ -186,9 +186,7 @@ def submit(
 def status(
     ctx: typer.Context,
     job_id: Annotated[str, typer.Argument(help="Job id returned by ``submit``.")],
-    mode: Annotated[
-        str | None, typer.Option("--mode", help="Detail mode: a, b, or c.")
-    ] = None,
+    mode: Annotated[str | None, typer.Option("--mode", help="Detail mode: a, b, or c.")] = None,
 ) -> None:
     """Print the status payload for ``job_id``."""
     params = {"mode": mode} if mode else None
@@ -237,9 +235,10 @@ def models(ctx: typer.Context) -> None:
 def _stream_job(base_url: str, job_id: str) -> None:
     """Tail the SSE endpoint and print every ``data:`` payload."""
     try:
-        with _client(base_url, timeout=None) as client, client.stream(
-            "GET", f"/v1/jobs/{job_id}/stream"
-        ) as resp:
+        with (
+            _client(base_url, timeout=None) as client,
+            client.stream("GET", f"/v1/jobs/{job_id}/stream") as resp,
+        ):
             resp.raise_for_status()
             for line in resp.iter_lines():
                 if not line:

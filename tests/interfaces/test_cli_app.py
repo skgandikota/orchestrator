@@ -24,9 +24,7 @@ runner = CliRunner(mix_stderr=False)
 # --------------------------------------------------------------------------- #
 # Helpers                                                                     #
 # --------------------------------------------------------------------------- #
-def _install_transport(
-    monkeypatch: pytest.MonkeyPatch, handler: Any
-) -> list[httpx.Request]:
+def _install_transport(monkeypatch: pytest.MonkeyPatch, handler: Any) -> list[httpx.Request]:
     """Replace ``cli._client`` with a client that uses a MockTransport."""
     captured: list[httpx.Request] = []
 
@@ -170,9 +168,7 @@ def test_submit_honors_env_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_submit_missing_job_id(monkeypatch: pytest.MonkeyPatch) -> None:
-    _install_transport(
-        monkeypatch, lambda r: httpx.Response(200, json={"unexpected": True})
-    )
+    _install_transport(monkeypatch, lambda r: httpx.Response(200, json={"unexpected": True}))
     result = runner.invoke(app, ["submit", "x"])
     assert result.exit_code == 1
     assert "job_id" in result.stderr
@@ -197,9 +193,7 @@ def test_submit_with_stream(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_submit_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    _install_transport(
-        monkeypatch, lambda r: httpx.Response(500, text="boom")
-    )
+    _install_transport(monkeypatch, lambda r: httpx.Response(500, text="boom"))
     result = runner.invoke(app, ["submit", "x"])
     assert result.exit_code == 2
     assert "HTTP 500" in result.stderr
