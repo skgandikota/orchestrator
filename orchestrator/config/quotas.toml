@@ -1,0 +1,31 @@
+# Default per-provider free-tier quotas.
+#
+# Limits are expressed across two rolling windows: per-minute (RPM/TPM) and
+# per-day (RPD/TPD). A value of 0 means "no limit on this dimension". Values
+# below mirror the public free-tier documentation as of 2025; operators are
+# expected to override via environment / config when the upstream provider
+# changes them.
+
+[anthropic]
+rpm = 50
+tpm = 40000
+rpd = 1000
+tpd = 1000000
+
+[gemini]
+rpm = 15
+tpm = 1000000
+rpd = 1500
+tpd = 50000000
+
+[openai]
+rpm = 3
+tpm = 40000
+rpd = 200
+tpd = 200000
+
+[groq]
+rpm = 30
+tpm = 6000
+rpd = 14400
+tpd = 500000
