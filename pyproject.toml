@@ -110,6 +110,8 @@ testpaths = ["tests"]
 addopts = "-ra --strict-markers -m 'not ollama'"
 markers = [
     "ollama: live evals that hit a local Ollama instance (opt-in via -m ollama)",
+    "smoke: mocked smoke tests; safe in CI",
+    "live: live smoke tests against a real Ollama daemon; require --live",
 ]
 asyncio_mode = "strict"
 
