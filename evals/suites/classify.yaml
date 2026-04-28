@@ -1,0 +1,20 @@
+name: classify
+version: 1
+min_pass_rate: 0.8
+cases:
+  - name: search_intent
+    prompt: "What is the capital of France?"
+    expected_intent: search
+  - name: code_intent
+    prompt: "Refactor this function for readability."
+    expected_intent: code
+  - name: summarize_intent
+    prompt: "Summarize this document briefly."
+    expected_intent: summarize
+  - name: chat_intent
+    prompt: "Tell me a joke."
+    expected_intent: chat
+  - name: other_intent
+    prompt: "###"
+    expected_intent: other
+

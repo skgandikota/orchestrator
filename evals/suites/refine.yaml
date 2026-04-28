@@ -1,0 +1,20 @@
+name: refine
+version: 1
+min_pass_rate: 0.8
+cases:
+  - name: keep_keyword
+    prompt: "Refine the answer to be fast."
+    expected_substrings: ["fast"]
+  - name: drop_filler
+    prompt: "Refine: produce concise output."
+    forbidden_substrings: ["BANNED_TOKEN"]
+  - name: regex_imperative
+    prompt: "Refine: rewrite imperatively."
+    expected_regex: ["\\w+"]
+  - name: latency
+    prompt: "Refine quickly."
+    max_latency_ms: 5000
+  - name: confidence
+    prompt: "Refine with high confidence."
+    min_confidence: 0.5
+

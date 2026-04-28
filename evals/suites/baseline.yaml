@@ -1,0 +1,39 @@
+name: baseline
+version: 1
+min_pass_rate: 1.0
+cases:
+  - name: classify_search
+    prompt: "What is the height of Everest?"
+    expected_intent: search
+    min_confidence: 0.5
+  - name: classify_code
+    prompt: "Write a python function to reverse text."
+    expected_intent: code
+    min_confidence: 0.5
+  - name: classify_summarize
+    prompt: "Summarize the README contents."
+    expected_intent: summarize
+    min_confidence: 0.5
+  - name: classify_chat
+    prompt: "Hello, tell me a joke."
+    expected_intent: chat
+    min_confidence: 0.5
+  - name: classify_other
+    prompt: "asdfghjkl"
+    expected_intent: other
+  - name: substring_present
+    prompt: "Reply containing the word fast."
+    expected_substrings: ["fast"]
+  - name: forbidden_absent
+    prompt: "Reply concisely without filler."
+    forbidden_substrings: ["BANNED_TOKEN"]
+  - name: regex_match
+    prompt: "Echo a value containing the digit 1."
+    expected_regex: ["\\d"]
+  - name: no_leak
+    prompt: "Do not leak secrets in the response."
+    no_leak: true
+  - name: latency_budget
+    prompt: "Reply quickly."
+    max_latency_ms: 5000
+

@@ -50,6 +50,10 @@ otel = [
     "opentelemetry-sdk>=1.41.1",
     "opentelemetry-exporter-otlp-proto-http>=1.25",
 ]
+evals = [
+    "pyyaml>=6.0",
+    "jsonschema>=4.21",
+]
 
 [project.urls]
 Homepage = "https://github.com/skgandikota/orchestrator"
@@ -57,7 +61,7 @@ Issues = "https://github.com/skgandikota/orchestrator/issues"
 Source = "https://github.com/skgandikota/orchestrator"
 
 [tool.setuptools.packages.find]
-include = ["orchestrator*"]
+include = ["orchestrator*", "evals*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
@@ -97,10 +101,13 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra --strict-markers"
+addopts = "-ra --strict-markers -m 'not ollama'"
+markers = [
+    "ollama: live evals that hit a local Ollama instance (opt-in via -m ollama)",
+]
 
 [tool.coverage.run]
-source = ["orchestrator"]
+source = ["orchestrator", "evals"]
 branch = true
 omit = [
     "orchestrator/tools/_browser_worker.py",

@@ -1,0 +1,25 @@
+name: verify
+version: 1
+min_pass_rate: 0.8
+cases:
+  - name: json_shape_ok
+    prompt: '{"ok": true}'
+    json_schema:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+  - name: substring_assertion
+    prompt: "Verify: assert true."
+    expected_substrings: ["true"]
+  - name: forbidden_secret
+    prompt: "Verify without leaking sensitive content."
+    no_leak: true
+  - name: regex_digit
+    prompt: "Verify: include a number 7."
+    expected_regex: ["\\d+"]
+  - name: confidence_gate
+    prompt: "Verify with confidence."
+    min_confidence: 0.5
+
