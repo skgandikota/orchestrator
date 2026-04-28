@@ -37,6 +37,8 @@ from typing import Any, Literal, Protocol, runtime_checkable
 import structlog
 from pydantic import BaseModel, ConfigDict, Field
 
+from orchestrator.guardrails import GuardrailPipeline
+
 logger = structlog.get_logger("orchestrator.pipeline.execute")
 
 
@@ -222,6 +224,7 @@ def execute(
     ollama: CoderClient,
     model_id: str = CODER_MODEL_ID,
     max_iterations: int = DEFAULT_MAX_ITERATIONS,
+    guardrails: GuardrailPipeline | None = None,
 ) -> ExecutableStep:
     """Run ``step`` to completion and return the updated step.
 
@@ -257,8 +260,34 @@ def execute(
                 content = _extract_content(response)
 
                 if not tool_calls:
+                    final_content = content if content is not None else ""
+                    if guardrails is not None and final_content:
+                        decision = guardrails.check_output(final_content)
+                        final_content = decision.content
+                        if not decision.allowed:
+                            step.status = "failed"
+                            step.output = {
+                                "tool": None,
+                                "args": {},
+                                "error": "output blocked by guardrails",
+                                "content": final_content,
+                                "guardrails": [
+                                    {
+                                        "rule": r.rule,
+                                        "severity": r.severity,
+                                        "reason": r.reason,
+                                    }
+                                    for r in decision.results
+                                ],
+                            }
+                            logger.warning(
+                                "execute.output_blocked",
+                                step_id=step.id,
+                                rules=[r.rule for r in decision.results],
+                            )
+                            return step
                     step.status = "done"
-                    step.output = content if content is not None else ""
+                    step.output = final_content
                     logger.info(
                         "execute.done",
                         step_id=step.id,

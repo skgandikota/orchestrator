@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 __all__ = [
     "DEFAULT_SETTINGS_PATH",
     "FsToolSettings",
+    "GuardrailsSettings",
     "LoggingSettings",
     "OllamaSettings",
     "RamSettings",
@@ -120,6 +121,18 @@ class StateSettings(BaseModel):
     db_path: Path = Field(default=Path("./orchestrator.db"))
 
 
+class GuardrailsSettings(BaseModel):
+    """Settings for local input/output guardrails."""
+
+    enabled: bool = True
+    redact_pii: bool = True
+    redact_secrets: bool = True
+    detect_injection: bool = True
+    enforce_policy: bool = True
+    daily_token_quota: int | None = None
+    max_token_fraction: float = Field(0.8, gt=0.0, le=1.0)
+
+
 class ToolsSettings(BaseModel):
     fs: FsToolSettings = Field(default_factory=FsToolSettings)
     shell: ShellToolSettings = Field(default_factory=ShellToolSettings)
@@ -133,6 +146,7 @@ class Settings(BaseModel):
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
     state: StateSettings = Field(default_factory=StateSettings)
     tools: ToolsSettings = Field(default_factory=ToolsSettings)
+    guardrails: GuardrailsSettings = Field(default_factory=GuardrailsSettings)
 
 
 def _read_toml(path: Path) -> dict[str, Any]:

@@ -21,6 +21,8 @@ from typing import Literal, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field, ValidationError
 
+from orchestrator.guardrails import GuardrailPipeline
+
 PROMPT_TEMPLATE_PATH = Path(__file__).resolve().parent.parent / "prompts" / "refine.md"
 PROMPT_TEMPLATE_VERSION = 1
 DEFAULT_MODEL = "qwen2.5:7b"
@@ -123,6 +125,7 @@ def refine(
     *,
     client: ModelClient,
     model: str = DEFAULT_MODEL,
+    guardrails: GuardrailPipeline | None = None,
 ) -> RefinedPrompt:
     """Run the refine pipeline step.
 
@@ -133,6 +136,12 @@ def refine(
     Idempotent given a deterministic client (``temperature=0``).
     """
     prompt = _render_template(brief)
+    if guardrails is not None:
+        decision = guardrails.check_input(prompt)
+        if not decision.allowed:
+            reasons = "; ".join(r.reason or r.rule for r in decision.results)
+            raise RefineError(f"input guardrails blocked refine: {reasons}")
+        prompt = decision.content
     last_error: RefineError | None = None
     for _ in range(2):
         raw = client.generate(model=model, prompt=prompt, temperature=0.0)
