@@ -79,9 +79,7 @@ def test_list_models_shape(client: TestClient) -> None:
         assert isinstance(m["created"], int)
 
 
-def test_chat_completion_non_stream(
-    client: TestClient, fake_backend: FakeBackend
-) -> None:
+def test_chat_completion_non_stream(client: TestClient, fake_backend: FakeBackend) -> None:
     resp = client.post(
         "/v1/chat/completions",
         json={
