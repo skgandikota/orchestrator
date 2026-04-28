@@ -1,0 +1,17 @@
+# Overlay: first-time model pre-pull. The `ollama-init` service is also
+# defined in compose.yaml under the `init` profile; this overlay exists
+# so operators can compose the stack with `-f compose.init.yaml` and
+# tweak the model list locally without editing the main file.
+#
+# Usage:
+#   docker compose -f compose.yaml -f compose.init.yaml --profile init up ollama-init
+#
+# Customize the model set via the OLLAMA_MODELS env var (whitespace-
+# separated tags). Defaults below mirror the orchestrator's recommended
+# stack.
+
+services:
+  ollama-init:
+    profiles: ["init"]
+    environment:
+      OLLAMA_MODELS: ${OLLAMA_MODELS:-qwen2.5:7b qwen2.5-coder:7b qwen2.5:1.5b}

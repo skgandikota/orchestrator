@@ -1,0 +1,36 @@
+# Copy to `docker-compose.override.yml` and edit to taste.
+# Compose auto-loads `docker-compose.override.yml` (or `compose.override.yaml`)
+# alongside the primary `compose.yaml` — no extra `-f` flags needed.
+#
+# Common local tweaks are listed below. Uncomment what you need.
+
+services:
+
+  # --- bind a different host port for the orchestrator -------------------
+  # orchestrator:
+  #   ports:
+  #     - "18000:8000"
+
+  # --- expose Ollama directly on the host (e.g. to share with another
+  # tool on the workstation) --------------------------------------------
+  # ollama:
+  #   ports:
+  #     - "11434:11434"
+
+  # --- swap to the NVIDIA GPU runtime for Ollama -------------------------
+  # Requires the NVIDIA Container Toolkit on the host.
+  # ollama:
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: all
+  #             capabilities: ["gpu"]
+
+  # --- mount a host-side Playwright cache for the browser variant -------
+  # Useful when the orchestrator image is built from `Dockerfile.browser`
+  # and you want to reuse a Chromium download already on disk.
+  # orchestrator:
+  #   volumes:
+  #     - ${HOME}/.cache/ms-playwright:/home/orchestrator/.cache/ms-playwright

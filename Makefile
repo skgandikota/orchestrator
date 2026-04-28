@@ -1,4 +1,5 @@
-.PHONY: help install lint format test cov precommit clean serve docker-build docker-run
+.PHONY: help install lint format test cov precommit clean serve docker-build docker-run \
+        compose-up compose-down compose-init compose-logs compose-pull
 
 .DEFAULT_GOAL := help
 
@@ -44,3 +45,20 @@ docker-run: ## Run the slim image with sensible local defaults
 		-v $(PWD)/config:/etc/orchestrator:ro \
 		-v orchestrator-data:/var/lib/orchestrator \
 		$(IMAGE)
+
+# --- docker compose -----------------------------------------------------
+
+compose-up: ## Bring up the compose stack (ollama + orchestrator)
+	docker compose up -d
+
+compose-down: ## Stop the compose stack (preserves named volumes)
+	docker compose down
+
+compose-init: ## One-shot: pull the default model set into the ollama volume
+	docker compose --profile init up --exit-code-from ollama-init ollama-init
+
+compose-logs: ## Tail logs from the running compose stack
+	docker compose logs -f --tail=200
+
+compose-pull: ## Pull the latest base images referenced by compose.yaml
+	docker compose pull

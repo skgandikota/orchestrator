@@ -1,0 +1,97 @@
+# Compose stack for the orchestrator + a local Ollama backend.
+#
+# Default usage (cold start, assumes models already pulled):
+#   docker compose up -d
+#
+# First-time / model pre-pull (one-shot):
+#   docker compose --profile init up ollama-init
+#   # or via the dedicated overlay:
+#   docker compose -f compose.yaml -f compose.init.yaml --profile init up
+#
+# Browser-fallback variant:
+#   docker compose -f compose.yaml -f compose.browser.yaml up -d
+#
+# `docker compose down` preserves named volumes; `docker compose down -v`
+# removes them (i.e. wipes the local model cache and orchestrator data).
+
+name: orchestrator
+
+# --- inference backend --------------------------------------------------
+services:
+  ollama:
+    image: ollama/ollama:latest
+    # Internal-only by default — the orchestrator service reaches it over
+    # the compose network at `http://ollama:11434`. To expose Ollama on
+    # the host, copy `docker-compose.override.yml.example` and uncomment
+    # the `ports:` block there.
+    expose:
+      - "11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-5m}
+    restart: unless-stopped
+    healthcheck:
+      # The official ollama/ollama image ships curl in $PATH.
+      test: ["CMD-SHELL", "curl -fsS http://localhost:11434/api/tags || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  # --- orchestrator -----------------------------------------------------
+  orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: orchestrator:slim
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+      ORCH_LOG_LEVEL: ${ORCH_LOG_LEVEL:-INFO}
+      ORCH_RAM_HARD_CAP_MB: ${ORCH_RAM_HARD_CAP_MB:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+    ports:
+      - "${ORCH_HOST_PORT:-8000}:8000"
+    volumes:
+      - ./config:/etc/orchestrator:ro
+      - orch-data:/var/lib/orchestrator
+    restart: unless-stopped
+
+  # --- one-shot init: pull models, then exit ----------------------------
+  # Activated only via the `init` profile so it does not run on
+  # `docker compose up`. Run with:
+  #   docker compose --profile init up ollama-init
+  ollama-init:
+    image: ollama/ollama:latest
+    profiles: ["init"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      # Whitespace-separated list of model tags to pre-pull.
+      OLLAMA_MODELS: ${OLLAMA_MODELS:-qwen2.5:7b qwen2.5-coder:7b qwen2.5:1.5b}
+    entrypoint: ["/bin/sh", "-lc"]
+    command:
+      - |
+        set -eu
+        echo "Pre-pulling models against $$OLLAMA_HOST: $$OLLAMA_MODELS"
+        for m in $$OLLAMA_MODELS; do
+          echo ">>> ollama pull $$m"
+          ollama pull "$$m"
+        done
+        echo "All models pulled."
+    restart: "no"
+
+volumes:
+  # Project-prefixed (compose adds the `name:` above) so multiple checkouts
+  # don't collide: `orchestrator_ollama-models`, `orchestrator_orch-data`.
+  ollama-models:
+  orch-data:

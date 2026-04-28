@@ -159,6 +159,68 @@ Confirm you built the slim image with `--target runtime` (not the
 docker image ls orchestrator:slim --format '{{.Size}}'
 ```
 
+## Quick start with docker compose
+
+The repo ships a `compose.yaml` that brings up the orchestrator together
+with a local Ollama. This is the recommended way to run the stack on a
+workstation that doesn't already have Ollama installed.
+
+```bash
+git clone https://github.com/skgandikota/orchestrator.git
+cd orchestrator
+
+cp .env.example .env
+${EDITOR:-vi} .env          # fill in any free-tier API keys you want active
+
+# 1. First-time model pre-pull (one-shot, ~10–20 min on a fresh machine).
+docker compose --profile init up --exit-code-from ollama-init ollama-init
+
+# 2. Start the stack.
+docker compose up -d
+
+# 3. Smoke test.
+curl -fsS http://localhost:8000/v1/models
+```
+
+### Workflows
+
+| Goal | Command |
+| --- | --- |
+| Cold start (models already pulled) | `docker compose up -d` |
+| Pre-pull / refresh models | `docker compose --profile init up ollama-init` |
+| Tail orchestrator + ollama logs | `docker compose logs -f --tail=200` |
+| Exec a shell in the orchestrator | `docker compose exec orchestrator sh` |
+| Stop, keep volumes (model cache + data) | `docker compose down` |
+| Stop **and wipe** model cache + data | `docker compose down -v` |
+
+### Browser-fallback variant
+
+```bash
+docker compose -f compose.yaml -f compose.browser.yaml up -d
+```
+
+The overlay swaps the orchestrator build to `Dockerfile.browser` so the
+optional browser-fallback search path (#9) works without mounting a host
+Playwright cache.
+
+### Customizing the deployment
+
+Copy `docker-compose.override.yml.example` to `docker-compose.override.yml`
+and uncomment the snippet you need (different host port, expose Ollama on
+the host, switch Ollama to the NVIDIA GPU runtime, mount a Playwright
+cache for the browser variant). Compose loads the override automatically.
+
+### Volumes
+
+The stack uses two named, project-prefixed volumes so multiple checkouts
+don't collide:
+
+- `orchestrator_ollama-models` — persists the Ollama model cache.
+- `orchestrator_orch-data` — orchestrator runtime data (SQLite cache, audit log).
+
+`docker compose down` leaves both intact. `docker compose down -v` removes
+them.
+
 ## Make targets
 
 For local convenience the top-level `Makefile` exposes:
@@ -166,4 +228,10 @@ For local convenience the top-level `Makefile` exposes:
 ```bash
 make docker-build   # build orchestrator:slim
 make docker-run     # run orchestrator:slim with sensible defaults
+
+make compose-up     # docker compose up -d
+make compose-init   # one-shot model pre-pull (profile: init)
+make compose-logs   # tail logs from the running stack
+make compose-pull   # refresh base images
+make compose-down   # stop the stack (keeps volumes)
 ```
