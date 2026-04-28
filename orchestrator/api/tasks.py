@@ -27,6 +27,8 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from orchestrator.runtime.status import snapshot as build_snapshot
+
 __all__ = [
     "Job",
     "JobManager",
@@ -288,8 +290,11 @@ async def submit_job(payload: JobSubmit) -> dict[str, str]:
 
 @router.get("/jobs/{job_id}")
 async def get_job(job_id: str) -> dict[str, Any]:
-    """Return the full job state."""
-    return get_job_manager().get(job_id).to_state()
+    """Return the full job state plus a status mode A snapshot."""
+    job = get_job_manager().get(job_id)
+    state = job.to_state()
+    state["snapshot"] = build_snapshot(job).to_dict()
+    return state
 
 
 @router.get("/jobs/{job_id}/stream")
