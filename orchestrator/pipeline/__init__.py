@@ -13,6 +13,14 @@ from .execute import (
     execute,
 )
 from .execute import ExecutableStep as ExecutableStep
+from .parse import (
+    ActionItem,
+    ActionType,
+    ParsedActions,
+    ParseModelClient,
+    load_repair_prompt,
+    parse_model_output,
+)
 from .plan import (
     BigModelRouter,
     EventHandler,
@@ -37,6 +45,8 @@ from .verify import (
 )
 
 __all__ = [
+    "ActionItem",
+    "ActionType",
     "BigModelRouter",
     "CoderClient",
     "ConsolidatedBrief",
@@ -46,6 +56,8 @@ __all__ = [
     "IterationCapError",
     "ModelClient",
     "OllamaClient",
+    "ParseModelClient",
+    "ParsedActions",
     "Plan",
     "PlanError",
     "PlanStep",
@@ -59,6 +71,8 @@ __all__ = [
     "ToolRegistry",
     "VerifyDecision",
     "execute",
+    "load_repair_prompt",
+    "parse_model_output",
     "plan",
     "refine",
     "verify",
