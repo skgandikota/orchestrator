@@ -18,6 +18,7 @@ import subprocess
 import sys
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -156,8 +157,8 @@ class BrowserTool:
         call_timeout: float = DEFAULT_CALL_TIMEOUT,
         idle_timeout: float = DEFAULT_IDLE_TIMEOUT,
         text_cap: int = DEFAULT_TEXT_CAP,
-        transport_factory=None,
-        url_resolver=None,
+        transport_factory: Callable[[], _Transport] | None = None,
+        url_resolver: Callable[..., Any] | None = None,
     ) -> None:
         self.call_timeout = call_timeout
         self.idle_timeout = idle_timeout

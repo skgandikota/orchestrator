@@ -111,6 +111,7 @@ module = [
     "yaml.*",
     "litellm.*",
     "mcp.*",
+    "playwright.*",
 ]
 ignore_missing_imports = true
 
@@ -147,10 +148,6 @@ asyncio_mode = "strict"
 [tool.coverage.run]
 source = ["orchestrator", "evals"]
 branch = true
-omit = [
-    "orchestrator/tools/_browser_worker.py",
-    "orchestrator/tools/browser.py",
-]
 
 [tool.coverage.report]
 fail_under = 95

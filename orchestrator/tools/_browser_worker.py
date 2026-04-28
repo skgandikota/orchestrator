@@ -29,12 +29,12 @@ DEFAULT_TEXT_CAP = 200 * 1024
 class _Worker:
     def __init__(self, text_cap: int = DEFAULT_TEXT_CAP) -> None:
         self.text_cap = text_cap
-        self._playwright = None
-        self._browser = None
-        self._context = None
+        self._playwright: Any | None = None
+        self._browser: Any | None = None
+        self._context: Any | None = None
 
     # -- lifecycle ----------------------------------------------------
-    def _ensure_context(self):  # pragma: no cover - requires Playwright
+    def _ensure_context(self) -> Any:
         if self._context is not None:
             return self._context
         from playwright.sync_api import sync_playwright
@@ -44,13 +44,13 @@ class _Worker:
         self._context = self._browser.new_context()
         return self._context
 
-    def _open(self, url: str):  # pragma: no cover - requires Playwright
+    def _open(self, url: str) -> tuple[Any, Any]:
         ctx = self._ensure_context()
         page = ctx.new_page()
         response = page.goto(url, wait_until="domcontentloaded")
         return page, response
 
-    def _snapshot(self, page, response, url: str) -> dict[str, Any]:  # pragma: no cover
+    def _snapshot(self, page: Any, response: Any, url: str) -> dict[str, Any]:
         text = page.evaluate("() => document.body ? document.body.innerText : ''") or ""
         if len(text) > self.text_cap:
             text = text[: self.text_cap]
@@ -66,14 +66,14 @@ class _Worker:
         }
 
     # -- handlers -----------------------------------------------------
-    def browse(self, url: str) -> dict[str, Any]:  # pragma: no cover
+    def browse(self, url: str) -> dict[str, Any]:
         page, response = self._open(url)
         try:
             return self._snapshot(page, response, url)
         finally:
             page.close()
 
-    def screenshot(self, url: str) -> dict[str, Any]:  # pragma: no cover
+    def screenshot(self, url: str) -> dict[str, Any]:
         import base64
 
         page, _ = self._open(url)
@@ -83,7 +83,7 @@ class _Worker:
             page.close()
         return {"png_b64": base64.b64encode(png).decode("ascii")}
 
-    def extract(self, url: str, selector: str) -> dict[str, Any]:  # pragma: no cover
+    def extract(self, url: str, selector: str) -> dict[str, Any]:
         page, _ = self._open(url)
         try:
             handles = page.query_selector_all(selector)
@@ -92,7 +92,7 @@ class _Worker:
             page.close()
         return {"matches": values}
 
-    def click(self, url: str, selector: str) -> dict[str, Any]:  # pragma: no cover
+    def click(self, url: str, selector: str) -> dict[str, Any]:
         page, response = self._open(url)
         try:
             page.click(selector)
@@ -101,7 +101,7 @@ class _Worker:
         finally:
             page.close()
 
-    def fill(self, url: str, selector: str, value: str) -> dict[str, Any]:  # pragma: no cover
+    def fill(self, url: str, selector: str, value: str) -> dict[str, Any]:
         page, response = self._open(url)
         try:
             page.fill(selector, value)
@@ -109,7 +109,7 @@ class _Worker:
         finally:
             page.close()
 
-    def shutdown(self) -> dict[str, Any]:  # pragma: no cover
+    def shutdown(self) -> dict[str, Any]:
         try:
             if self._context is not None:
                 self._context.close()
@@ -124,7 +124,7 @@ class _Worker:
         return {"ok": True}
 
     # -- dispatch -----------------------------------------------------
-    def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:  # pragma: no cover
+    def dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         if method == "browse":
             return self.browse(params["url"])
         if method == "screenshot":
@@ -140,20 +140,27 @@ class _Worker:
         raise ValueError(f"unknown method: {method}")
 
 
-def main() -> int:  # pragma: no cover - exercised only in real subprocess
-    worker = _Worker()
-    for line in sys.stdin:
+def main(
+    stdin: Any | None = None,
+    stdout: Any | None = None,
+    worker: _Worker | None = None,
+) -> int:
+    """Run the JSON-RPC loop until stdin closes or ``shutdown`` is called."""
+    stdin = stdin if stdin is not None else sys.stdin
+    stdout = stdout if stdout is not None else sys.stdout
+    worker = worker if worker is not None else _Worker()
+    for line in stdin:
         line = line.strip()
         if not line:
             continue
         try:
             req = json.loads(line)
         except json.JSONDecodeError as exc:
-            sys.stdout.write(
+            stdout.write(
                 json.dumps({"id": None, "error": {"type": "ProtocolError", "message": str(exc)}})
                 + "\n"
             )
-            sys.stdout.flush()
+            stdout.flush()
             continue
 
         rid = req.get("id")
@@ -161,9 +168,9 @@ def main() -> int:  # pragma: no cover - exercised only in real subprocess
         params = req.get("params") or {}
         try:
             result = worker.dispatch(method, params)
-            sys.stdout.write(json.dumps({"id": rid, "result": result}) + "\n")
+            stdout.write(json.dumps({"id": rid, "result": result}) + "\n")
         except Exception as exc:
-            sys.stdout.write(
+            stdout.write(
                 json.dumps(
                     {
                         "id": rid,
@@ -172,7 +179,7 @@ def main() -> int:  # pragma: no cover - exercised only in real subprocess
                 )
                 + "\n"
             )
-        sys.stdout.flush()
+        stdout.flush()
 
         if method == "shutdown":
             return 0
